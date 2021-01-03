@@ -34,7 +34,12 @@ bevy = "0.4"
 bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 ```
 
-2. include the `PlayerPlugin`:
+2. Include the `PlayerPlugin`
+```rust
+use bevy_flycam::PlayerPlugin;
+```
+
+3. Add the `PlayerPlugin`:
 ```rust
 #[bevy_main]
 fn main() {
@@ -46,4 +51,4 @@ fn main() {
 ```
 
 ## Contributing
-PRs are very welcome
+PRs are very welcome.

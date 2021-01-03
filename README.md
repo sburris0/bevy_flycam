@@ -1,4 +1,5 @@
 # bevy_flycam
+[![Crates.io](https://img.shields.io/crates/v/bevy_flycam)](https://crates.io/crates/bevy_flycam)
 A basic first-person fly camera for Bevy 0.4
 
 ## Controls
@@ -17,7 +18,22 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 * A tiny bit faster?
 
 ## Usage
-Simply add to `Cargo.toml` and then include the `PlayerPlugin`:
+1. Add to `Cargo.toml` or copy `lib.rs` to your own file
+```toml
+[dependencies]
+bevy = "0.4"
+bevy_flycam = "0.1"
+```
+
+or
+
+```toml
+[dependencies]
+bevy = "0.4"
+bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
+```
+
+2. include the `PlayerPlugin`:
 ```rust
 fn main() {
     App::build()
@@ -26,3 +42,6 @@ fn main() {
         .run();
 }
 ```
+
+## Contributing
+PRs are very welcome

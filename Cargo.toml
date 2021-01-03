@@ -3,6 +3,14 @@ name = "bevy_flycam"
 version = "0.1.0"
 authors = ["Spencer Burris <sburris@posteo.net>"]
 edition = "2018"
+license = "ISC"
+description = "Basic first-person fly camera for the Bevy game engine"
+homepage = "https://github.com/sburris0/bevy_flycam/"
+repository = "https://github.com/sburris0/bevy_flycam/"
+readme = "README.md"
+keywords = ["gamedev", "bevy", "3d"]
+categories = ["game-engines", "graphics", "gui"]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

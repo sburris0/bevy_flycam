@@ -1,5 +1,6 @@
 # bevy_flycam
 [![Crates.io](https://img.shields.io/crates/v/bevy_flycam)](https://crates.io/crates/bevy_flycam)
+
 A basic first-person fly camera for Bevy 0.4
 
 ## Controls
@@ -35,6 +36,7 @@ bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 
 2. include the `PlayerPlugin`:
 ```rust
+#[bevy_main]
 fn main() {
     App::build()
         .add_plugins(DefaultPlugins)

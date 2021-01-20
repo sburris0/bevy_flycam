@@ -2,6 +2,7 @@ use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 use bevy::render::camera::Camera;
 
+/// Keeps track of mouse motion events, pitch, and yaw
 #[derive(Default)]
 struct InputState {
     reader_motion: EventReader<MouseMotion>,
@@ -9,16 +10,19 @@ struct InputState {
     yaw: f32,
 }
 
+/// Mouse sensitivity and movement speed
 struct MovementSettings {
     sensitivity: f32,
     speed: f32,
 }
 
+/// Grabs/ungrabs mouse cursor
 fn toggle_grab_cursor(window: &mut Window) {
     window.set_cursor_lock_mode(!window.cursor_locked());
     window.set_cursor_visibility(!window.cursor_visible());
 }
 
+/// Spawns the `Camera3dBundle` to be controlled
 fn setup_player(commands: &mut Commands, mut windows: ResMut<Windows>) {
     commands.spawn(Camera3dBundle {
         transform: Transform::from_matrix(Mat4::from_rotation_translation(
@@ -31,6 +35,7 @@ fn setup_player(commands: &mut Commands, mut windows: ResMut<Windows>) {
     toggle_grab_cursor(windows.get_primary_mut().unwrap());
 }
 
+/// Handles keyboard input and movement
 fn player_move(
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
@@ -62,6 +67,7 @@ fn player_move(
     }
 }
 
+/// Handles looking around if cursor is locked
 fn player_look(
     settings: Res<MovementSettings>,
     keys: Res<Input<KeyCode>>,
@@ -91,6 +97,7 @@ fn player_look(
     }
 }
 
+/// Contains everything needed to add first-person fly camera behavior to your game
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut AppBuilder) {

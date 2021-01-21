@@ -11,9 +11,18 @@ struct InputState {
 }
 
 /// Mouse sensitivity and movement speed
-struct MovementSettings {
-    sensitivity: f32,
-    speed: f32,
+pub struct MovementSettings {
+    pub sensitivity: f32,
+    pub speed: f32,
+}
+
+impl Default for MovementSettings {
+    fn default() -> Self {
+        Self {
+            sensitivity: 0.00012,
+            speed: 12.,
+        }
+    }
 }
 
 /// Grabs/ungrabs mouse cursor
@@ -103,10 +112,7 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.add_startup_system(setup_player.system())
             .init_resource::<InputState>()
-            .add_resource(MovementSettings {
-                sensitivity: 0.00012,
-                speed: 12.,
-            })
+            .add_resource(MovementSettings::default())
             .add_system(player_move.system())
             .add_system(player_look.system());
     }

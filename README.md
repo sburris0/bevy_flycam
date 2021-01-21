@@ -50,5 +50,21 @@ fn main() {
 }
 ```
 
+## Customization
+To modify player movement speed or mouse sensitivity, import `bevy_flycam::MovementSettings` and add it as a resource:
+```Rust
+#[bevy_main]
+fn main() {
+    App::build()
+        .add_plugins(DefaultPlugins)
+        .add_plugin(PlayerPlugin)
+        .add_resources(MovementSettings {
+            sensitivity: 0.00015 // default: 0.00012
+            speed; 150.0, // default: 12.0
+        })
+        .run();
+}
+```
+
 ## Contributing
 PRs are very welcome.

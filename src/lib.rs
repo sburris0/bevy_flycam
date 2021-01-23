@@ -34,10 +34,7 @@ fn toggle_grab_cursor(window: &mut Window) {
 /// Spawns the `Camera3dBundle` to be controlled
 fn setup_player(commands: &mut Commands, mut windows: ResMut<Windows>) {
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_matrix(Mat4::from_rotation_translation(
-            Quat::identity(),
-            Vec3::new(0., 2., 0.),
-        )),
+        transform: Transform::from_translation(Vec3::new(0., 2., 0.)),
         ..Default::default()
     });
 

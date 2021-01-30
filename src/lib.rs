@@ -1,6 +1,5 @@
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
-use bevy::render::camera::Camera;
 
 /// Keeps track of mouse motion events, pitch, and yaw
 #[derive(Default)]
@@ -25,6 +24,9 @@ impl Default for MovementSettings {
     }
 }
 
+/// Used in queries when you want flycams and not other cameras
+pub struct FlyCam;
+
 /// Grabs/ungrabs mouse cursor
 fn toggle_grab_cursor(window: &mut Window) {
     window.set_cursor_lock_mode(!window.cursor_locked());
@@ -36,7 +38,8 @@ fn setup_player(commands: &mut Commands, mut windows: ResMut<Windows>) {
     commands.spawn(Camera3dBundle {
         transform: Transform::from_translation(Vec3::new(0., 2., 0.)),
         ..Default::default()
-    });
+    })
+    .with(FlyCam);
 
     toggle_grab_cursor(windows.get_primary_mut().unwrap());
 }
@@ -46,7 +49,7 @@ fn player_move(
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
     settings: Res<MovementSettings>,
-    mut query: Query<(&Camera, &mut Transform)>,
+    mut query: Query<(&FlyCam, &mut Transform)>,
 ) {
     for (_camera, mut transform) in query.iter_mut() {
         let mut velocity = Vec3::zero();
@@ -80,7 +83,7 @@ fn player_look(
     mut windows: ResMut<Windows>,
     mut state: ResMut<InputState>,
     motion: Res<Events<MouseMotion>>,
-    mut query: Query<(&Camera, &mut Transform)>,
+    mut query: Query<(&FlyCam, &mut Transform)>,
 ) {
     let window = windows.get_primary_mut().unwrap();
     for (_camera, mut transform) in query.iter_mut() {

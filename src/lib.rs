@@ -35,11 +35,12 @@ fn toggle_grab_cursor(window: &mut Window) {
 
 /// Spawns the `Camera3dBundle` to be controlled
 fn setup_player(commands: &mut Commands, mut windows: ResMut<Windows>) {
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_translation(Vec3::new(0., 2., 0.)),
-        ..Default::default()
-    })
-    .with(FlyCam);
+    commands
+        .spawn(Camera3dBundle {
+            transform: Transform::from_translation(Vec3::new(0., 2., 0.)),
+            ..Default::default()
+        })
+        .with(FlyCam);
 
     toggle_grab_cursor(windows.get_primary_mut().unwrap());
 }
@@ -88,16 +89,16 @@ fn player_look(
     let window = windows.get_primary_mut().unwrap();
     for (_camera, mut transform) in query.iter_mut() {
         for ev in state.reader_motion.iter(&motion) {
-            state.pitch -= (settings.sensitivity * ev.delta.y * window.height()).to_radians();
-            state.yaw -= (settings.sensitivity * ev.delta.x * window.width()).to_radians();
+            if window.cursor_locked() {
+                state.pitch -= (settings.sensitivity * ev.delta.y * window.height()).to_radians();
+                state.yaw -= (settings.sensitivity * ev.delta.x * window.width()).to_radians();
+            }
 
             state.pitch = state.pitch.clamp(-1.54, 1.54);
 
             // Order is important to prevent unintended roll
-            if window.cursor_locked() {
-                transform.rotation = Quat::from_axis_angle(Vec3::unit_y(), state.yaw)
-                    * Quat::from_axis_angle(Vec3::unit_x(), state.pitch);
-            }
+            transform.rotation = Quat::from_axis_angle(Vec3::unit_y(), state.yaw)
+                * Quat::from_axis_angle(Vec3::unit_x(), state.pitch);
         }
 
         if keys.just_pressed(KeyCode::Escape) {

@@ -39,15 +39,13 @@ fn initial_grab_cursor(mut windows: ResMut<Windows>) {
 }
 
 /// Spawns the `Camera3dBundle` to be controlled
-fn setup_player(commands: &mut Commands, mut windows: ResMut<Windows>) {
+fn setup_player(commands: &mut Commands) {
     commands
         .spawn(Camera3dBundle {
             transform: Transform::from_translation(Vec3::new(0., 2., 0.)),
             ..Default::default()
         })
         .with(FlyCam);
-
-    toggle_grab_cursor(windows.get_primary_mut().unwrap());
 }
 
 /// Handles keyboard input and movement

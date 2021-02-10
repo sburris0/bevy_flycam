@@ -109,16 +109,12 @@ fn player_look(
     }
 }
 
-fn cursor_grab(
-    keys: Res<Input<KeyCode>>,
-    mut windows: ResMut<Windows>,
-) {
+fn cursor_grab(keys: Res<Input<KeyCode>>, mut windows: ResMut<Windows>) {
     let window = windows.get_primary_mut().unwrap();
     if keys.just_pressed(KeyCode::Escape) {
         toggle_grab_cursor(window);
     }
 }
-
 
 /// Contains everything needed to add first-person fly camera behavior to your game
 pub struct PlayerPlugin;

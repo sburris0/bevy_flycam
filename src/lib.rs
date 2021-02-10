@@ -89,13 +89,12 @@ fn player_move(
 /// Handles looking around if cursor is locked
 fn player_look(
     settings: Res<MovementSettings>,
-    keys: Res<Input<KeyCode>>,
-    mut windows: ResMut<Windows>,
+    windows: Res<Windows>,
     mut state: ResMut<InputState>,
     motion: Res<Events<MouseMotion>>,
     mut query: Query<(&FlyCam, &mut Transform)>,
 ) {
-    let window = windows.get_primary_mut().unwrap();
+    let window = windows.get_primary().unwrap();
     for (_camera, mut transform) in query.iter_mut() {
         for ev in state.reader_motion.iter(&motion) {
             if window.cursor_locked() {
@@ -109,12 +108,19 @@ fn player_look(
             transform.rotation = Quat::from_axis_angle(Vec3::unit_y(), state.yaw)
                 * Quat::from_axis_angle(Vec3::unit_x(), state.pitch);
         }
-
-        if keys.just_pressed(KeyCode::Escape) {
-            toggle_grab_cursor(window);
-        }
     }
 }
+
+fn cursor_grab(
+    keys: Res<Input<KeyCode>>,
+    mut windows: ResMut<Windows>,
+) {
+    let window = windows.get_primary_mut().unwrap();
+    if keys.just_pressed(KeyCode::Escape) {
+        toggle_grab_cursor(window);
+    }
+}
+
 
 /// Contains everything needed to add first-person fly camera behavior to your game
 pub struct PlayerPlugin;
@@ -125,6 +131,7 @@ impl Plugin for PlayerPlugin {
             .add_startup_system(initial_grab_cursor.system())
             .add_resource(MovementSettings::default())
             .add_system(player_move.system())
-            .add_system(player_look.system());
+            .add_system(player_look.system())
+            .add_system(cursor_grab.system());
     }
 }

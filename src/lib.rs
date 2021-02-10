@@ -33,6 +33,11 @@ fn toggle_grab_cursor(window: &mut Window) {
     window.set_cursor_visibility(!window.cursor_visible());
 }
 
+/// Grabs the cursor when game first starts
+fn initial_grab_cursor(mut windows: ResMut<Windows>) {
+    toggle_grab_cursor(windows.get_primary_mut().unwrap());
+}
+
 /// Spawns the `Camera3dBundle` to be controlled
 fn setup_player(commands: &mut Commands, mut windows: ResMut<Windows>) {
     commands
@@ -115,8 +120,9 @@ fn player_look(
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.add_startup_system(setup_player.system())
-            .init_resource::<InputState>()
+        app.init_resource::<InputState>()
+            .add_startup_system(setup_player.system())
+            .add_startup_system(initial_grab_cursor.system())
             .add_resource(MovementSettings::default())
             .add_system(player_move.system())
             .add_system(player_look.system());

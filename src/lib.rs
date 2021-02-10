@@ -49,11 +49,11 @@ fn setup_player(commands: &mut Commands, mut windows: ResMut<Windows>) {
 fn player_move(
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
-    mut windows: ResMut<Windows>,
+    windows: Res<Windows>,
     settings: Res<MovementSettings>,
     mut query: Query<(&FlyCam, &mut Transform)>,
 ) {
-    let window = windows.get_primary_mut().unwrap();
+    let window = windows.get_primary().unwrap();
     for (_camera, mut transform) in query.iter_mut() {
         let mut velocity = Vec3::zero();
         let forward = -Vec3::new(transform.forward().x, 0., transform.forward().z);

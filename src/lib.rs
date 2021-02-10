@@ -49,23 +49,27 @@ fn setup_player(commands: &mut Commands, mut windows: ResMut<Windows>) {
 fn player_move(
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
+    mut windows: ResMut<Windows>,
     settings: Res<MovementSettings>,
     mut query: Query<(&FlyCam, &mut Transform)>,
 ) {
+    let window = windows.get_primary_mut().unwrap();
     for (_camera, mut transform) in query.iter_mut() {
         let mut velocity = Vec3::zero();
         let forward = -Vec3::new(transform.forward().x, 0., transform.forward().z);
         let right = Vec3::new(transform.forward().z, 0., -transform.forward().x);
 
         for key in keys.get_pressed() {
-            match key {
-                KeyCode::W => velocity += forward,
-                KeyCode::S => velocity -= forward,
-                KeyCode::A => velocity -= right,
-                KeyCode::D => velocity += right,
-                KeyCode::Space => velocity += Vec3::unit_y(),
-                KeyCode::LShift => velocity -= Vec3::unit_y(),
-                _ => (),
+            if window.cursor_locked() {
+                match key {
+                    KeyCode::W => velocity += forward,
+                    KeyCode::S => velocity -= forward,
+                    KeyCode::A => velocity -= right,
+                    KeyCode::D => velocity += right,
+                    KeyCode::Space => velocity += Vec3::unit_y(),
+                    KeyCode::LShift => velocity -= Vec3::unit_y(),
+                    _ => (),
+                }
             }
         }
 

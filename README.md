@@ -1,5 +1,8 @@
 # bevy_flycam
 [![Crates.io](https://img.shields.io/crates/v/bevy_flycam)](https://crates.io/crates/bevy_flycam)
+![Crates.io](https://img.shields.io/crates/l/bevy_flycam)
+![docs.rs](https://img.shields.io/docsrs/bevy_flycam)
+
 
 A basic first-person fly camera for Bevy 0.4
 

@@ -121,9 +121,22 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<InputState>()
+            .init_resource::<MovementSettings>()
             .add_startup_system(setup_player.system())
             .add_startup_system(initial_grab_cursor.system())
-            .add_resource(MovementSettings::default())
+            .add_system(player_move.system())
+            .add_system(player_look.system())
+            .add_system(cursor_grab.system());
+    }
+}
+
+/// Same as `PlayerPlugin` but does not spawn a camera
+pub struct NoCameraPlayerPlugin;
+impl Plugin for NoCameraPlayerPlugin {
+    fn build(&self, app: &mut AppBuilder) {
+        app.init_resource::<InputState>()
+            .init_resource::<MovementSettings>()
+            .add_startup_system(initial_grab_cursor.system())
             .add_system(player_move.system())
             .add_system(player_look.system())
             .add_system(cursor_grab.system());

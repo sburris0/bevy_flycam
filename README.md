@@ -23,7 +23,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 ```toml
 [dependencies]
 bevy = "0.4"
-bevy_flycam = "0.1"
+bevy_flycam = "*"
 ```
 
 or
@@ -38,6 +38,8 @@ bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 ```rust
 use bevy_flycam::PlayerPlugin;
 ```
+This will spawn a camera for you. 
+Use `NoCameraPlayerPlugin` if you do not want this and make sure to use `.with(FlyCam)` on your own camera or else this plugin won't know what to move.
 
 3. Add the `PlayerPlugin`:
 ```rust

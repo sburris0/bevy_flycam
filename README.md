@@ -63,9 +63,9 @@ fn main() {
     App::build()
         .add_plugins(DefaultPlugins)
         .add_plugin(PlayerPlugin)
-        .add_resources(MovementSettings {
-            sensitivity: 0.00015 // default: 0.00012
-            speed; 150.0, // default: 12.0
+        .add_resource(MovementSettings {
+            sensitivity: 0.00015, // default: 0.00012
+            speed: 150.0, // default: 12.0
         })
         .run();
 }

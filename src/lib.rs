@@ -1,10 +1,22 @@
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
+use bevy::app::{Events, ManualEventReader};
+
+fn unit_x() -> Vec3 {
+    Vec3::new(1., 0., 0.)
+}
+fn unit_y() -> Vec3 {
+    Vec3::new(0., 1., 0.)
+}
+
+fn unit_z() -> Vec3 {
+    Vec3::new(0., 0., 1.)
+}
 
 /// Keeps track of mouse motion events, pitch, and yaw
 #[derive(Default)]
 struct InputState {
-    reader_motion: EventReader<MouseMotion>,
+    reader_motion: ManualEventReader<MouseMotion>,
     pitch: f32,
     yaw: f32,
 }
@@ -39,13 +51,12 @@ fn initial_grab_cursor(mut windows: ResMut<Windows>) {
 }
 
 /// Spawns the `Camera3dBundle` to be controlled
-fn setup_player(commands: &mut Commands) {
-    commands
-        .spawn(Camera3dBundle {
-            transform: Transform::from_translation(Vec3::new(0., 2., 0.)),
+fn setup_player(mut commands: Commands) {
+    commands.spawn_bundle(PerspectiveCameraBundle {
+            transform: Transform::from_xyz(-2.0, 72.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
             ..Default::default()
         })
-        .with(FlyCam);
+        .with::<FlyCam>();
 }
 
 /// Handles keyboard input and movement
@@ -58,9 +69,10 @@ fn player_move(
 ) {
     let window = windows.get_primary().unwrap();
     for (_camera, mut transform) in query.iter_mut() {
-        let mut velocity = Vec3::zero();
-        let forward = -Vec3::new(transform.forward().x, 0., transform.forward().z);
-        let right = Vec3::new(transform.forward().z, 0., -transform.forward().x);
+        let mut velocity = Vec3::ZERO;
+        let local_z = transform.local_z();
+        let forward = -Vec3::new(local_z.x, 0., local_z.z);
+        let right = Vec3::new(local_z.z, 0., -local_z.x);
 
         for key in keys.get_pressed() {
             if window.cursor_locked() {
@@ -69,8 +81,8 @@ fn player_move(
                     KeyCode::S => velocity -= forward,
                     KeyCode::A => velocity -= right,
                     KeyCode::D => velocity += right,
-                    KeyCode::Space => velocity += Vec3::unit_y(),
-                    KeyCode::LShift => velocity -= Vec3::unit_y(),
+                    KeyCode::Space => velocity += unit_y(),
+                    KeyCode::LShift => velocity -= unit_y(),
                     _ => (),
                 }
             }
@@ -103,8 +115,8 @@ fn player_look(
             state.pitch = state.pitch.clamp(-1.54, 1.54);
 
             // Order is important to prevent unintended roll
-            transform.rotation = Quat::from_axis_angle(Vec3::unit_y(), state.yaw)
-                * Quat::from_axis_angle(Vec3::unit_x(), state.pitch);
+            transform.rotation = Quat::from_axis_angle(unit_y(), state.yaw)
+                * Quat::from_axis_angle(unit_x(), state.pitch);
         }
     }
 }

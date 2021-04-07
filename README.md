@@ -55,6 +55,9 @@ fn main() {
 }
 ```
 
+Alternativly you can see the example `basic.rs` located in the examples folder.
+You can run the example by cloning this repository and run the command: `cargo run --release --example basic`
+
 ## Customization
 To modify player movement speed or mouse sensitivity, import `bevy_flycam::MovementSettings` and add it as a resource:
 ```Rust

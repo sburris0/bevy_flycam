@@ -14,4 +14,4 @@ categories = ["game-engines", "game-development"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-bevy = { git = "https://github.com/bevyengine/bevy/", tag = "v0.5.0" }
+bevy = { version = "0.5", default-features = false, features = ["render"] }

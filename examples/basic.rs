@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 extern crate bevy_flycam;
-use bevy_flycam::PlayerPlugin;
 use bevy_flycam::MovementSettings;
+use bevy_flycam::PlayerPlugin;
 
 //From bevy examples:
 //https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs
@@ -13,7 +13,7 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .insert_resource(MovementSettings {
             sensitivity: 0.00015, // default: 0.00012
-            speed: 12.0, // default: 12.0
+            speed: 12.0,          // default: 12.0
         })
         .add_startup_system(setup.system())
         .run();

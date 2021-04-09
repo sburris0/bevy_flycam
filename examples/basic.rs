@@ -1,5 +1,7 @@
-use bevy::prelude::*;
+// Remove the line below if you are copying this to your own project
 extern crate bevy_flycam;
+
+use bevy::prelude::*;
 use bevy_flycam::MovementSettings;
 use bevy_flycam::PlayerPlugin;
 

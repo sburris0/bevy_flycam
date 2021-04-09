@@ -21,6 +21,11 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 * Single-line setup
 * A tiny bit faster?
 
+Comparing [bevy_4x_camera](https://github.com/SarthakSingh31/bevy_4x_camera) :
+
+* Not frist-person but isometric-like (camera with high focal length)
+* Shorter/simple code
+
 ## Usage
 1. Add to `Cargo.toml` or copy `lib.rs` to your own file
 ```toml
@@ -55,7 +60,7 @@ fn main() {
 }
 ```
 
-Alternativly you can see the example `basic.rs` located in the examples folder.
+Alternativly you can see the example `basic.rs` or `scroll.rs` located in the examples folder.
 You can run the example by cloning this repository and run the command: `cargo run --release --example basic`
 
 ## Customization

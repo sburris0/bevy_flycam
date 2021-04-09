@@ -23,7 +23,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
 Comparing [bevy_4x_camera](https://github.com/SarthakSingh31/bevy_4x_camera) :
 
-* Not frist-person but isometric-like (camera with high focal length)
+* Not first-person but isometric-like (camera with high focal length)
 * Shorter/simple code
 
 ## Usage

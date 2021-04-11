@@ -55,7 +55,7 @@ fn main() {
 }
 ```
 
-Alternativly you can see the example `basic.rs` located in the examples folder.
+Alternatively you can see the example `basic.rs` or `scroll.rs` located in the examples folder.
 You can run the example by cloning this repository and run the command: `cargo run --release --example basic`
 
 ## Customization

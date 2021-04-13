@@ -1,11 +1,11 @@
 // Remove the line below if you are copying this to your own project
 extern crate bevy_flycam;
 
-use bevy::{input::mouse::MouseWheel, prelude::*, render::camera::PerspectiveProjection};
-
-use bevy_flycam::FlyCam;
-use bevy_flycam::MovementSettings;
-use bevy_flycam::PlayerPlugin;
+use bevy::{
+    input::mouse::MouseWheel, prelude::*, render::camera::Camera, render::camera::CameraProjection,
+    render::camera::PerspectiveProjection, window::Windows,
+};
+use bevy_flycam::{FlyCam, MovementSettings, NoCameraPlayerPlugin};
 
 // From bevy examples:
 // https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs
@@ -20,7 +20,8 @@ fn main() {
     App::build()
         .insert_resource(Msaa { samples: 4 })
         .add_plugins(DefaultPlugins)
-        .add_plugin(PlayerPlugin)
+        //NoCameraPlayerPlugin as we provide the camera
+        .add_plugin(NoCameraPlayerPlugin)
         .insert_resource(MovementSettings {
             ..Default::default()
         })
@@ -56,38 +57,59 @@ fn setup(
         transform: Transform::from_xyz(4.0, 8.0, 4.0),
         ..Default::default()
     });
+
+    // camera
+    let camera = PerspectiveCameraBundle {
+        transform: Transform::from_xyz(-2.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
+        ..Default::default()
+    };
+
+    // add plugin
+    commands.spawn_bundle(camera).insert(FlyCam);
 }
 
 // Listens for Z key being pressed and toggles between the two scroll-type states
+#[allow(unused_must_use)]
 fn switch_scroll_type(
     mut scroll_type: ResMut<State<ScrollType>>,
     keyboard_input: Res<Input<KeyCode>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Z) {
-        match scroll_type.current() {
-            ScrollType::MovementSpeed => scroll_type.set(ScrollType::Zoom),
-            ScrollType::Zoom => scroll_type.set(ScrollType::MovementSpeed),
-        }
-        .unwrap();
-        println!("{:?}", scroll_type.current());
+        let result = match scroll_type.current() {
+            ScrollType::MovementSpeed => ScrollType::Zoom,
+            ScrollType::Zoom => ScrollType::MovementSpeed,
+        };
+
+        println!("{:?}", result);
+        scroll_type.set(result);
     }
 }
 
-// Depending on the state, the mousescroll changes either the movement speed or the field-of-view of the camera
+// Depending on the state, the mouse-scroll changes either the movement speed or the field-of-view of the camera
 fn scroll(
     mut settings: ResMut<MovementSettings>,
     scroll_type: Res<State<ScrollType>>,
     mut mouse_wheel_events: EventReader<MouseWheel>,
-    mut query: Query<(&FlyCam, &mut PerspectiveProjection)>,
+    windows: Res<Windows>,
+    mut query: Query<(&FlyCam, &mut Camera, &mut PerspectiveProjection)>,
 ) {
     for event in mouse_wheel_events.iter() {
         if *scroll_type.current() == ScrollType::MovementSpeed {
             settings.speed = (settings.speed + event.y * 0.1).abs();
             println!("Speed: {:?}", settings.speed);
         } else {
-            for (_camera, mut project) in query.iter_mut() {
-                project.fov = (project.fov + event.y * 0.01).abs();
-                println!("{:?}", project);
+            for (_camera, mut camera, mut project) in query.iter_mut() {
+                project.fov = (project.fov - event.y * 0.01).abs();
+                let prim = windows.get_primary().unwrap();
+
+                //Calculate projection with new fov
+                project.update(prim.width(), prim.height());
+
+                //Update camera with the new fov
+                camera.projection_matrix = project.get_projection_matrix();
+                camera.depth_calculation = project.depth_calculation();
+
+                println!("FOV: {:?}", project.fov);
             }
         }
     }

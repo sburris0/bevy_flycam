@@ -2,19 +2,6 @@ use bevy::app::{Events, ManualEventReader};
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 
-fn unit_x() -> Vec3 {
-    Vec3::new(1., 0., 0.)
-}
-fn unit_y() -> Vec3 {
-    Vec3::new(0., 1., 0.)
-}
-
-//Allowed in case of future impl.
-#[allow(dead_code)]
-fn unit_z() -> Vec3 {
-    Vec3::new(0., 0., 1.)
-}
-
 /// Keeps track of mouse motion events, pitch, and yaw
 #[derive(Default)]
 struct InputState {
@@ -84,8 +71,8 @@ fn player_move(
                     KeyCode::S => velocity -= forward,
                     KeyCode::A => velocity -= right,
                     KeyCode::D => velocity += right,
-                    KeyCode::Space => velocity += unit_y(),
-                    KeyCode::LShift => velocity -= unit_y(),
+                    KeyCode::Space => velocity += Vec3::Y,
+                    KeyCode::LShift => velocity -= Vec3::Y,
                     _ => (),
                 }
             }
@@ -118,8 +105,8 @@ fn player_look(
             state.pitch = state.pitch.clamp(-1.54, 1.54);
 
             // Order is important to prevent unintended roll
-            transform.rotation = Quat::from_axis_angle(unit_y(), state.yaw)
-                * Quat::from_axis_angle(unit_x(), state.pitch);
+            transform.rotation = Quat::from_axis_angle(Vec3::Y, state.yaw)
+                * Quat::from_axis_angle(Vec3::X, state.pitch);
         }
     }
 }

@@ -98,8 +98,11 @@ fn player_look(
     for (_camera, mut transform) in query.iter_mut() {
         for ev in state.reader_motion.iter(&motion) {
             if window.cursor_locked() {
-                state.pitch -= (settings.sensitivity * ev.delta.y * window.height()).to_radians();
-                state.yaw -= (settings.sensitivity * ev.delta.x * window.width()).to_radians();
+                // Using smallest of height or width ensures equal vertical and horizontal sensitivity
+                let window_scale = window.height().min(window.width());
+
+                state.pitch -= (settings.sensitivity * ev.delta.y * window_scale).to_radians();
+                state.yaw -= (settings.sensitivity * ev.delta.x * window_scale).to_radians();
             }
 
             state.pitch = state.pitch.clamp(-1.54, 1.54);

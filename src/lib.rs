@@ -25,6 +25,31 @@ impl Default for MovementSettings {
     }
 }
 
+/// Key configuration
+pub struct KeyBindings {
+    pub move_forward: KeyCode,
+    pub move_backward: KeyCode,
+    pub move_left: KeyCode,
+    pub move_right: KeyCode,
+    pub move_ascend: KeyCode,
+    pub move_descend: KeyCode,
+    pub toggle_grab_cursor: KeyCode,
+}
+
+impl Default for KeyBindings {
+    fn default() -> Self {
+        Self {
+            move_forward: KeyCode::W,
+            move_backward: KeyCode::S,
+            move_left: KeyCode::A,
+            move_right: KeyCode::D,
+            move_ascend: KeyCode::Space,
+            move_descend: KeyCode::LShift,
+            toggle_grab_cursor: KeyCode::Escape,
+        }
+    }
+}
+
 /// Used in queries when you want flycams and not other cameras
 pub struct FlyCam;
 
@@ -55,6 +80,7 @@ fn player_move(
     time: Res<Time>,
     windows: Res<Windows>,
     settings: Res<MovementSettings>,
+    key_bindings: Res<KeyBindings>,
     mut query: Query<(&FlyCam, &mut Transform)>,
 ) {
     let window = windows.get_primary().unwrap();
@@ -66,14 +92,19 @@ fn player_move(
 
         for key in keys.get_pressed() {
             if window.cursor_locked() {
-                match key {
-                    KeyCode::W => velocity += forward,
-                    KeyCode::S => velocity -= forward,
-                    KeyCode::A => velocity -= right,
-                    KeyCode::D => velocity += right,
-                    KeyCode::Space => velocity += Vec3::Y,
-                    KeyCode::LShift => velocity -= Vec3::Y,
-                    _ => (),
+                let key = *key;
+                if key == key_bindings.move_forward {
+                    velocity += forward;
+                } else if key == key_bindings.move_backward {
+                    velocity -= forward;
+                } else if key == key_bindings.move_left {
+                    velocity -= right;
+                } else if key == key_bindings.move_right {
+                    velocity += right;
+                } else if key == key_bindings.move_ascend {
+                    velocity += Vec3::Y;
+                } else if key == key_bindings.move_descend {
+                    velocity -= Vec3::Y;
                 }
             }
         }
@@ -114,9 +145,13 @@ fn player_look(
     }
 }
 
-fn cursor_grab(keys: Res<Input<KeyCode>>, mut windows: ResMut<Windows>) {
+fn cursor_grab(
+    keys: Res<Input<KeyCode>>,
+    key_bindings: Res<KeyBindings>,
+    mut windows: ResMut<Windows>,
+) {
     let window = windows.get_primary_mut().unwrap();
-    if keys.just_pressed(KeyCode::Escape) {
+    if keys.just_pressed(key_bindings.toggle_grab_cursor) {
         toggle_grab_cursor(window);
     }
 }
@@ -127,6 +162,7 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<InputState>()
             .init_resource::<MovementSettings>()
+            .init_resource::<KeyBindings>()
             .add_startup_system(setup_player.system())
             .add_startup_system(initial_grab_cursor.system())
             .add_system(player_move.system())
@@ -141,6 +177,7 @@ impl Plugin for NoCameraPlayerPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<InputState>()
             .init_resource::<MovementSettings>()
+            .init_resource::<KeyBindings>()
             .add_startup_system(initial_grab_cursor.system())
             .add_system(player_move.system())
             .add_system(player_look.system())

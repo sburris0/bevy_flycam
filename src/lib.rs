@@ -78,11 +78,9 @@ fn player_move(
             }
         }
 
-        velocity = velocity.normalize();
+        velocity = velocity.normalize_or_zero();
 
-        if !velocity.is_nan() {
-            transform.translation += velocity * time.delta_seconds() * settings.speed
-        }
+        transform.translation += velocity * time.delta_seconds() * settings.speed
     }
 }
 

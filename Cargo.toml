@@ -22,10 +22,3 @@ bevy = {version = "0.6", default-features = false, features = ["render", "bevy_r
 [target.'cfg(target_os = "linux")'.dev-dependencies]
 bevy = {version = "0.6", default-features = false, features = ["x11", "wayland"]}
 
-[[example]]
-name = "basic"
-path = "examples/basic.rs"
-
-[[example]]
-name = "scroll"
-path = "examples/scroll.rs"

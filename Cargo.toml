@@ -10,7 +10,7 @@ name = "bevy_flycam"
 readme = "README.md"
 repository = "https://github.com/sburris0/bevy_flycam/"
 resolver = "2"
-version = "0.5.1"
+version = "0.6.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
@@ -21,4 +21,3 @@ bevy = {version = "0.6", default-features = false, features = ["render", "bevy_r
 
 [target.'cfg(target_os = "linux")'.dev-dependencies]
 bevy = {version = "0.6", default-features = false, features = ["x11", "wayland"]}
-

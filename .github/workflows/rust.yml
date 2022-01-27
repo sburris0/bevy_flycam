@@ -38,6 +38,14 @@ jobs:
     needs: update
     steps:
       - uses: actions/checkout@v2
+      - name: Update apt
+        run: sudo apt update
+      - name: Install libudev
+        run: sudo apt install libudev-dev
+      - name: Install libxkbcommon
+        run: sudo apt install libxkbcommon-dev
+      - name: Install libwayland
+        run: sudo apt install libwayland-dev
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal

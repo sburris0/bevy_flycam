@@ -17,7 +17,7 @@ fn main() {
             sensitivity: 0.00015, // default: 0.00012
             speed: 12.0,          // default: 12.0
         })
-        .add_startup_system(setup.system())
+        .add_startup_system(setup)
         .run();
 }
 
@@ -45,4 +45,9 @@ fn setup(
         transform: Transform::from_xyz(4.0, 8.0, 4.0),
         ..Default::default()
     });
+
+    info!("Move camera around by using WASD for lateral movement");
+    info!("Use Left Shift and Spacebar for vertical movement");
+    info!("Use the mouse to look around");
+    info!("Press Esc to hide or show the mouse cursor");
 }

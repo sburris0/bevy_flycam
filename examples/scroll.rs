@@ -27,9 +27,9 @@ fn main() {
         })
         // Setting initial state
         .add_state(ScrollType::MovementSpeed)
-        .add_startup_system(setup.system())
-        .add_system(switch_scroll_type.system())
-        .add_system(scroll.system())
+        .add_startup_system(setup)
+        .add_system(switch_scroll_type)
+        .add_system(scroll)
         .run();
 }
 
@@ -66,6 +66,9 @@ fn setup(
 
     // add plugin
     commands.spawn_bundle(camera).insert(FlyCam);
+
+    info!("Press 'Z' to switch between Movement Speed and Zoom");
+    info!("Changing the selected value by scrolling the mousewheel");
 }
 
 // Listens for Z key being pressed and toggles between the two scroll-type states

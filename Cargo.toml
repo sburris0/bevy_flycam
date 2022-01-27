@@ -1,23 +1,23 @@
 [package]
-authors = ["Spencer Burris <sburris@posteo.net>"]
-categories = ["game-engines", "game-development"]
-description = "Basic first-person fly camera for the Bevy game engine"
-edition = "2018"
-homepage = "https://github.com/sburris0/bevy_flycam/"
-keywords = ["gamedev", "bevy", "3d", "camera"]
-license = "ISC"
 name = "bevy_flycam"
-readme = "README.md"
-repository = "https://github.com/sburris0/bevy_flycam/"
-resolver = "2"
 version = "0.6.0"
+authors = ["Spencer Burris <sburris@posteo.net>"]
+edition = "2021"
+license = "ISC"
+description = "Basic first-person fly camera for the Bevy game engine"
+homepage = "https://github.com/sburris0/bevy_flycam/"
+repository = "https://github.com/sburris0/bevy_flycam/"
+readme = "README.md"
+keywords = ["gamedev", "bevy", "3d", "camera"]
+categories = ["game-engines", "game-development"]
+resolver = "2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 bevy = {version = "0.6", default-features = false, features = ["render"]}
 
 [dev-dependencies]
-bevy = {version = "0.6", default-features = false, features = ["render", "bevy_render", "bevy_winit"]}
+bevy = {version = "0.6", default-features = false, features = ["bevy_winit"]}
 
 [target.'cfg(target_os = "linux")'.dev-dependencies]
 bevy = {version = "0.6", default-features = false, features = ["x11", "wayland"]}

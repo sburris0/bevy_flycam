@@ -27,7 +27,6 @@ impl Default for MovementSettings {
 
 /// Used in queries when you want flycams and not other cameras
 #[derive(Component)]
-#[component(storage = "SparseSet")]
 pub struct FlyCam;
 
 /// Grabs/ungrabs mouse cursor

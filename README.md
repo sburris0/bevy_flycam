@@ -4,7 +4,7 @@
 ![docs.rs](https://img.shields.io/docsrs/bevy_flycam)
 
 
-A basic first-person fly camera for Bevy 0.5
+A basic first-person fly camera for Bevy 0.6
 
 ## Controls
 * WASD to move horizontally
@@ -25,7 +25,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 1. Add to `Cargo.toml` or copy `lib.rs` to your own file
 ```toml
 [dependencies]
-bevy = "0.5"
+bevy = "0.6"
 bevy_flycam = "*"
 ```
 
@@ -33,7 +33,7 @@ or
 
 ```toml
 [dependencies]
-bevy = "0.5"
+bevy = "0.6"
 bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 ```
 
@@ -48,7 +48,7 @@ Use `NoCameraPlayerPlugin` if you do not want this and make sure to use `.insert
 ```rust
 #[bevy_main]
 fn main() {
-    App::build()
+    App::new()
         .add_plugins(DefaultPlugins)
         .add_plugin(PlayerPlugin)
         .run();
@@ -63,7 +63,7 @@ To modify player movement speed or mouse sensitivity, import `bevy_flycam::Movem
 ```Rust
 #[bevy_main]
 fn main() {
-    App::build()
+    App::new()
         .add_plugins(DefaultPlugins)
         .add_plugin(PlayerPlugin)
         .insert_resource(MovementSettings {

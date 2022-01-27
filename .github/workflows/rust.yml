@@ -38,6 +38,8 @@ jobs:
     needs: update
     steps:
       - uses: actions/checkout@v2
+      - name: Install libwayland
+        run: sudo apt install libwayland-dev
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal

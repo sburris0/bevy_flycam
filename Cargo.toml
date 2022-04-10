@@ -14,7 +14,10 @@ resolver = "2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-bevy = {version = "0.6", default-features = false, features = ["bevy_render"]}
+bevy = {version = "0.7.0-dev", default-features = false, features = ["bevy_render"]}
 
 [dev-dependencies]
-bevy = {version = "0.6", default-features = false, features = ["x11", "wayland", "bevy_pbr", "bevy_core_pipeline"]}
+bevy = {version = "0.7.0-dev", default-features = false, features = ["x11", "wayland", "bevy_pbr", "bevy_core_pipeline"]}
+
+[patch.crates-io]
+bevy = { git = "https://github.com/bevyengine/bevy", branch = "main" }

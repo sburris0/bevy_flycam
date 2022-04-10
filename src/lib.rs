@@ -1,4 +1,4 @@
-use bevy::ecs::event::{ManualEventReader, Events};
+use bevy::ecs::event::{Events, ManualEventReader};
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 
@@ -25,7 +25,7 @@ impl Default for MovementSettings {
     }
 }
 
-/// Used in queries when you want flycams and not other cameras
+/// A marker component used in queries when you want flycams and not other cameras
 #[derive(Component)]
 pub struct FlyCam;
 
@@ -100,7 +100,8 @@ fn player_look(
             if window.cursor_locked() {
                 // Using smallest of height or width ensures equal vertical and horizontal sensitivity
                 let window_scale = window.height().min(window.width());
-                delta_state.pitch -= (settings.sensitivity * ev.delta.y * window_scale).to_radians();
+                delta_state.pitch -=
+                    (settings.sensitivity * ev.delta.y * window_scale).to_radians();
                 delta_state.yaw -= (settings.sensitivity * ev.delta.x * window_scale).to_radians();
             }
 
@@ -134,7 +135,7 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-/// Same as `PlayerPlugin` but does not spawn a camera
+/// Same as [`PlayerPlugin`] but does not spawn a camera
 pub struct NoCameraPlayerPlugin;
 impl Plugin for NoCameraPlayerPlugin {
     fn build(&self, app: &mut App) {

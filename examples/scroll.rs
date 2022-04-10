@@ -1,6 +1,3 @@
-// Remove the line below if you are copying this to your own project
-extern crate bevy_flycam;
-
 use bevy::{
     input::mouse::MouseWheel, prelude::*, render::camera::Camera, render::camera::CameraProjection,
     render::camera::PerspectiveProjection, window::Windows,
@@ -71,7 +68,7 @@ fn setup(
     info!("Changing the selected value by scrolling the mousewheel");
 }
 
-// Listens for Z key being pressed and toggles between the two scroll-type states
+/// Listens for Z key being pressed and toggles between the two scroll-type states [`ScrollType`]
 #[allow(unused_must_use)]
 fn switch_scroll_type(
     mut scroll_type: ResMut<State<ScrollType>>,
@@ -88,7 +85,7 @@ fn switch_scroll_type(
     }
 }
 
-// Depending on the state, the mouse-scroll changes either the movement speed or the field-of-view of the camera
+/// Depending on the state, the mouse-scroll changes either the movement speed or the field-of-view of the camera
 fn scroll(
     mut settings: ResMut<MovementSettings>,
     scroll_type: Res<State<ScrollType>>,

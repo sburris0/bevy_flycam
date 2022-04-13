@@ -77,7 +77,7 @@ fn main() {
 # Support
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
-bevy_flycam's crate version matches bevy's X version as shown:
+bevy_flycam's crate version follows bevy's X version as shown:
 |bevy|bevy_flycam|
 |---|---|
 |0.X.Y|0.X|

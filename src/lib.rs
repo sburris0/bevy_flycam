@@ -1,4 +1,4 @@
-use bevy::app::{Events, ManualEventReader};
+use bevy::ecs::event::{Events, ManualEventReader};
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 
@@ -25,7 +25,7 @@ impl Default for MovementSettings {
     }
 }
 
-/// Used in queries when you want flycams and not other cameras
+/// A marker component used in queries when you want flycams and not other cameras
 #[derive(Component)]
 pub struct FlyCam;
 
@@ -56,10 +56,10 @@ fn player_move(
     time: Res<Time>,
     windows: Res<Windows>,
     settings: Res<MovementSettings>,
-    mut query: Query<(&FlyCam, &mut Transform)>,
+    mut query: Query<&mut Transform, With<FlyCam>>,
 ) {
     let window = windows.get_primary().unwrap();
-    for (_camera, mut transform) in query.iter_mut() {
+    for mut transform in query.iter_mut() {
         let mut velocity = Vec3::ZERO;
         let local_z = transform.local_z();
         let forward = -Vec3::new(local_z.x, 0., local_z.z);
@@ -91,24 +91,25 @@ fn player_look(
     windows: Res<Windows>,
     mut state: ResMut<InputState>,
     motion: Res<Events<MouseMotion>>,
-    mut query: Query<(&FlyCam, &mut Transform)>,
+    mut query: Query<&mut Transform, With<FlyCam>>,
 ) {
     let window = windows.get_primary().unwrap();
-    for (_camera, mut transform) in query.iter_mut() {
-        for ev in state.reader_motion.iter(&motion) {
+    let mut delta_state = state.as_mut();
+    for mut transform in query.iter_mut() {
+        for ev in delta_state.reader_motion.iter(&motion) {
             if window.cursor_locked() {
                 // Using smallest of height or width ensures equal vertical and horizontal sensitivity
                 let window_scale = window.height().min(window.width());
-
-                state.pitch -= (settings.sensitivity * ev.delta.y * window_scale).to_radians();
-                state.yaw -= (settings.sensitivity * ev.delta.x * window_scale).to_radians();
+                delta_state.pitch -=
+                    (settings.sensitivity * ev.delta.y * window_scale).to_radians();
+                delta_state.yaw -= (settings.sensitivity * ev.delta.x * window_scale).to_radians();
             }
 
-            state.pitch = state.pitch.clamp(-1.54, 1.54);
+            delta_state.pitch = delta_state.pitch.clamp(-1.54, 1.54);
 
             // Order is important to prevent unintended roll
-            transform.rotation = Quat::from_axis_angle(Vec3::Y, state.yaw)
-                * Quat::from_axis_angle(Vec3::X, state.pitch);
+            transform.rotation = Quat::from_axis_angle(Vec3::Y, delta_state.yaw)
+                * Quat::from_axis_angle(Vec3::X, delta_state.pitch);
         }
     }
 }
@@ -134,7 +135,7 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-/// Same as `PlayerPlugin` but does not spawn a camera
+/// Same as [`PlayerPlugin`] but does not spawn a camera
 pub struct NoCameraPlayerPlugin;
 impl Plugin for NoCameraPlayerPlugin {
     fn build(&self, app: &mut App) {

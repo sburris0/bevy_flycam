@@ -56,7 +56,7 @@ fn setup(
     });
 
     // camera
-    let camera = PerspectiveCameraBundle {
+    let camera = Camera3dBundle {
         transform: Transform::from_xyz(-2.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
         ..Default::default()
     };
@@ -106,7 +106,8 @@ fn scroll(
                 project.update(prim.width(), prim.height());
 
                 //Update camera with the new fov
-                camera.projection_matrix = project.get_projection_matrix();
+                // camera.projection_matrix() = project.get_projection_matrix();
+                // camera
                 camera.depth_calculation = project.depth_calculation();
 
                 println!("FOV: {:?}", project.fov);

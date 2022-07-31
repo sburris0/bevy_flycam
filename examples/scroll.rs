@@ -1,7 +1,4 @@
-use bevy::{
-    input::mouse::MouseWheel, prelude::*, render::camera::Camera, render::camera::CameraProjection,
-    render::camera::PerspectiveProjection, window::Windows,
-};
+use bevy::{input::mouse::MouseWheel, prelude::*, render::camera::Projection};
 use bevy_flycam::{FlyCam, MovementSettings, NoCameraPlayerPlugin};
 
 // From bevy examples:
@@ -90,27 +87,18 @@ fn scroll(
     mut settings: ResMut<MovementSettings>,
     scroll_type: Res<State<ScrollType>>,
     mut mouse_wheel_events: EventReader<MouseWheel>,
-    windows: Res<Windows>,
-    mut query: Query<(&FlyCam, &mut Camera, &mut PerspectiveProjection)>,
+    mut query: Query<(&FlyCam, &mut Projection)>,
 ) {
     for event in mouse_wheel_events.iter() {
         if *scroll_type.current() == ScrollType::MovementSpeed {
             settings.speed = (settings.speed + event.y * 0.1).abs();
             println!("Speed: {:?}", settings.speed);
         } else {
-            for (_camera, mut camera, mut project) in query.iter_mut() {
-                project.fov = (project.fov - event.y * 0.01).abs();
-                let prim = windows.get_primary().unwrap();
-
-                //Calculate projection with new fov
-                project.update(prim.width(), prim.height());
-
-                //Update camera with the new fov
-                // camera.projection_matrix() = project.get_projection_matrix();
-                // camera
-                camera.depth_calculation = project.depth_calculation();
-
-                println!("FOV: {:?}", project.fov);
+            for (_camera, project) in query.iter_mut() {
+                if let Projection::Perspective(perspective) = project.into_inner() {
+                    perspective.fov = (perspective.fov - event.y * 0.01).abs();
+                    println!("FOV: {:?}", perspective.fov);
+                }
             }
         }
     }

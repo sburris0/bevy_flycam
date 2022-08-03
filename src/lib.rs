@@ -37,7 +37,11 @@ fn toggle_grab_cursor(window: &mut Window) {
 
 /// Grabs the cursor when game first starts
 fn initial_grab_cursor(mut windows: ResMut<Windows>) {
-    toggle_grab_cursor(windows.get_primary_mut().unwrap());
+    if let Some(window) = windows.get_primary_mut() {
+        toggle_grab_cursor(window);
+    } else {
+        warn!("Primary window not found for `initial_grab_cursor`!");
+    }
 }
 
 /// Spawns the `Camera3dBundle` to be controlled
@@ -58,30 +62,33 @@ fn player_move(
     settings: Res<MovementSettings>,
     mut query: Query<&mut Transform, With<FlyCam>>,
 ) {
-    let window = windows.get_primary().unwrap();
-    for mut transform in query.iter_mut() {
-        let mut velocity = Vec3::ZERO;
-        let local_z = transform.local_z();
-        let forward = -Vec3::new(local_z.x, 0., local_z.z);
-        let right = Vec3::new(local_z.z, 0., -local_z.x);
+    if let Some(window) = windows.get_primary() {
+        for mut transform in query.iter_mut() {
+            let mut velocity = Vec3::ZERO;
+            let local_z = transform.local_z();
+            let forward = -Vec3::new(local_z.x, 0., local_z.z);
+            let right = Vec3::new(local_z.z, 0., -local_z.x);
 
-        for key in keys.get_pressed() {
-            if window.cursor_locked() {
-                match key {
-                    KeyCode::W => velocity += forward,
-                    KeyCode::S => velocity -= forward,
-                    KeyCode::A => velocity -= right,
-                    KeyCode::D => velocity += right,
-                    KeyCode::Space => velocity += Vec3::Y,
-                    KeyCode::LShift => velocity -= Vec3::Y,
-                    _ => (),
+            for key in keys.get_pressed() {
+                if window.cursor_locked() {
+                    match key {
+                        KeyCode::W => velocity += forward,
+                        KeyCode::S => velocity -= forward,
+                        KeyCode::A => velocity -= right,
+                        KeyCode::D => velocity += right,
+                        KeyCode::Space => velocity += Vec3::Y,
+                        KeyCode::LShift => velocity -= Vec3::Y,
+                        _ => (),
+                    }
                 }
             }
+
+            velocity = velocity.normalize_or_zero();
+
+            transform.translation += velocity * time.delta_seconds() * settings.speed
         }
-
-        velocity = velocity.normalize_or_zero();
-
-        transform.translation += velocity * time.delta_seconds() * settings.speed
+    } else {
+        warn!("Primary window not found for `player_move`!");
     }
 }
 
@@ -93,31 +100,38 @@ fn player_look(
     motion: Res<Events<MouseMotion>>,
     mut query: Query<&mut Transform, With<FlyCam>>,
 ) {
-    let window = windows.get_primary().unwrap();
-    let mut delta_state = state.as_mut();
-    for mut transform in query.iter_mut() {
-        for ev in delta_state.reader_motion.iter(&motion) {
-            if window.cursor_locked() {
-                // Using smallest of height or width ensures equal vertical and horizontal sensitivity
-                let window_scale = window.height().min(window.width());
-                delta_state.pitch -=
-                    (settings.sensitivity * ev.delta.y * window_scale).to_radians();
-                delta_state.yaw -= (settings.sensitivity * ev.delta.x * window_scale).to_radians();
+    if let Some(window) = windows.get_primary() {
+        let mut delta_state = state.as_mut();
+        for mut transform in query.iter_mut() {
+            for ev in delta_state.reader_motion.iter(&motion) {
+                if window.cursor_locked() {
+                    // Using smallest of height or width ensures equal vertical and horizontal sensitivity
+                    let window_scale = window.height().min(window.width());
+                    delta_state.pitch -=
+                        (settings.sensitivity * ev.delta.y * window_scale).to_radians();
+                    delta_state.yaw -=
+                        (settings.sensitivity * ev.delta.x * window_scale).to_radians();
+                }
+
+                delta_state.pitch = delta_state.pitch.clamp(-1.54, 1.54);
+
+                // Order is important to prevent unintended roll
+                transform.rotation = Quat::from_axis_angle(Vec3::Y, delta_state.yaw)
+                    * Quat::from_axis_angle(Vec3::X, delta_state.pitch);
             }
-
-            delta_state.pitch = delta_state.pitch.clamp(-1.54, 1.54);
-
-            // Order is important to prevent unintended roll
-            transform.rotation = Quat::from_axis_angle(Vec3::Y, delta_state.yaw)
-                * Quat::from_axis_angle(Vec3::X, delta_state.pitch);
         }
+    } else {
+        warn!("Primary window not found for `player_look`!");
     }
 }
 
 fn cursor_grab(keys: Res<Input<KeyCode>>, mut windows: ResMut<Windows>) {
-    let window = windows.get_primary_mut().unwrap();
-    if keys.just_pressed(KeyCode::Escape) {
-        toggle_grab_cursor(window);
+    if let Some(window) = windows.get_primary_mut() {
+        if keys.just_pressed(KeyCode::Escape) {
+            toggle_grab_cursor(window);
+        }
+    } else {
+        warn!("Primary window not found for `cursor_grab`!");
     }
 }
 

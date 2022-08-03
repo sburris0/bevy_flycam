@@ -40,7 +40,7 @@ fn initial_grab_cursor(mut windows: ResMut<Windows>) {
     if let Some(window) = windows.get_primary_mut() {
         toggle_grab_cursor(window);
     } else {
-        warn!("Primary window not found!");
+        warn!("Primary window not found for `initial_grab_cursor`!");
     }
 }
 
@@ -88,7 +88,7 @@ fn player_move(
             transform.translation += velocity * time.delta_seconds() * settings.speed
         }
     } else {
-        warn!("Primary window not found!");
+        warn!("Primary window not found for `player_move`!");
     }
 }
 
@@ -121,7 +121,7 @@ fn player_look(
             }
         }
     } else {
-        warn!("Primary window not found!");
+        warn!("Primary window not found for `player_look`!");
     }
 }
 
@@ -131,7 +131,7 @@ fn cursor_grab(keys: Res<Input<KeyCode>>, mut windows: ResMut<Windows>) {
             toggle_grab_cursor(window);
         }
     } else {
-        warn!("Primary window not found!");
+        warn!("Primary window not found for `cursor_grab`!");
     }
 }
 

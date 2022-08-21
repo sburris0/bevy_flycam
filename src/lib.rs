@@ -6,8 +6,6 @@ use bevy::prelude::*;
 #[derive(Default)]
 struct InputState {
     reader_motion: ManualEventReader<MouseMotion>,
-    pitch: f32,
-    yaw: f32,
 }
 
 /// Mouse sensitivity and movement speed
@@ -101,23 +99,21 @@ fn player_look(
     mut query: Query<&mut Transform, With<FlyCam>>,
 ) {
     if let Some(window) = windows.get_primary() {
-        let mut delta_state = state.as_mut();
         for mut transform in query.iter_mut() {
-            for ev in delta_state.reader_motion.iter(&motion) {
+            for ev in state.reader_motion.iter(&motion) {
+                let (mut yaw, mut pitch, _) = transform.rotation.to_euler(EulerRot::YXZ);
                 if window.cursor_locked() {
                     // Using smallest of height or width ensures equal vertical and horizontal sensitivity
                     let window_scale = window.height().min(window.width());
-                    delta_state.pitch -=
-                        (settings.sensitivity * ev.delta.y * window_scale).to_radians();
-                    delta_state.yaw -=
-                        (settings.sensitivity * ev.delta.x * window_scale).to_radians();
+                    pitch -= (settings.sensitivity * ev.delta.y * window_scale).to_radians();
+                    yaw -= (settings.sensitivity * ev.delta.x * window_scale).to_radians();
                 }
 
-                delta_state.pitch = delta_state.pitch.clamp(-1.54, 1.54);
+                pitch = pitch.clamp(-1.54, 1.54);
 
                 // Order is important to prevent unintended roll
-                transform.rotation = Quat::from_axis_angle(Vec3::Y, delta_state.yaw)
-                    * Quat::from_axis_angle(Vec3::X, delta_state.pitch);
+                transform.rotation =
+                    Quat::from_axis_angle(Vec3::Y, yaw) * Quat::from_axis_angle(Vec3::X, pitch);
             }
         }
     } else {

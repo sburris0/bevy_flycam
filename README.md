@@ -4,7 +4,7 @@
 ![docs.rs](https://img.shields.io/docsrs/bevy_flycam)
 
 
-A basic first-person fly camera for Bevy 0.8
+A basic first-person fly camera for Bevy 0.9
 
 ## Controls
 * WASD to move horizontally

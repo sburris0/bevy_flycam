@@ -42,7 +42,7 @@ fn toggle_grab_cursor(window: &mut Window) {
         _ => {
             window.set_cursor_grab_mode(CursorGrabMode::None);
             window.set_cursor_visibility(true);
-        },
+        }
     }
 }
 

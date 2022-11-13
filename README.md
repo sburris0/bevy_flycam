@@ -25,7 +25,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 1. Add to `Cargo.toml` or copy `lib.rs` to your own file
 ```toml
 [dependencies]
-bevy = "0.8"
+bevy = "0.9"
 bevy_flycam = "*"
 ```
 
@@ -33,7 +33,7 @@ or
 
 ```toml
 [dependencies]
-bevy = "0.8"
+bevy = "0.9"
 bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 ```
 

@@ -1,9 +1,10 @@
 use bevy::ecs::event::{Events, ManualEventReader};
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
+use bevy::window::CursorGrabMode;
 
 /// Keeps track of mouse motion events, pitch, and yaw
-#[derive(Default)]
+#[derive(Resource, Default)]
 struct InputState {
     reader_motion: ManualEventReader<MouseMotion>,
     pitch: f32,
@@ -11,6 +12,8 @@ struct InputState {
 }
 
 /// Mouse sensitivity and movement speed
+
+#[derive(Resource)]
 pub struct MovementSettings {
     pub sensitivity: f32,
     pub speed: f32,
@@ -31,8 +34,16 @@ pub struct FlyCam;
 
 /// Grabs/ungrabs mouse cursor
 fn toggle_grab_cursor(window: &mut Window) {
-    window.set_cursor_lock_mode(!window.cursor_locked());
-    window.set_cursor_visibility(!window.cursor_visible());
+    match window.cursor_grab_mode() {
+        CursorGrabMode::None => {
+            window.set_cursor_grab_mode(CursorGrabMode::Confined);
+            window.set_cursor_visibility(false);
+        }
+        _ => {
+            window.set_cursor_grab_mode(CursorGrabMode::None);
+            window.set_cursor_visibility(true);
+        },
+    }
 }
 
 /// Grabs the cursor when game first starts
@@ -46,12 +57,13 @@ fn initial_grab_cursor(mut windows: ResMut<Windows>) {
 
 /// Spawns the `Camera3dBundle` to be controlled
 fn setup_player(mut commands: Commands) {
-    commands
-        .spawn_bundle(Camera3dBundle {
+    commands.spawn((
+        Camera3dBundle {
             transform: Transform::from_xyz(-2.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
             ..Default::default()
-        })
-        .insert(FlyCam);
+        },
+        FlyCam,
+    ));
 }
 
 /// Handles keyboard input and movement
@@ -70,8 +82,9 @@ fn player_move(
             let right = Vec3::new(local_z.z, 0., -local_z.x);
 
             for key in keys.get_pressed() {
-                if window.cursor_locked() {
-                    match key {
+                match window.cursor_grab_mode() {
+                    CursorGrabMode::None => (),
+                    _ => match key {
                         KeyCode::W => velocity += forward,
                         KeyCode::S => velocity -= forward,
                         KeyCode::A => velocity -= right,
@@ -79,7 +92,7 @@ fn player_move(
                         KeyCode::Space => velocity += Vec3::Y,
                         KeyCode::LShift => velocity -= Vec3::Y,
                         _ => (),
-                    }
+                    },
                 }
             }
 
@@ -104,13 +117,16 @@ fn player_look(
         let mut delta_state = state.as_mut();
         for mut transform in query.iter_mut() {
             for ev in delta_state.reader_motion.iter(&motion) {
-                if window.cursor_locked() {
-                    // Using smallest of height or width ensures equal vertical and horizontal sensitivity
-                    let window_scale = window.height().min(window.width());
-                    delta_state.pitch -=
-                        (settings.sensitivity * ev.delta.y * window_scale).to_radians();
-                    delta_state.yaw -=
-                        (settings.sensitivity * ev.delta.x * window_scale).to_radians();
+                match window.cursor_grab_mode() {
+                    CursorGrabMode::None => (),
+                    _ => {
+                        // Using smallest of height or width ensures equal vertical and horizontal sensitivity
+                        let window_scale = window.height().min(window.width());
+                        delta_state.pitch -=
+                            (settings.sensitivity * ev.delta.y * window_scale).to_radians();
+                        delta_state.yaw -=
+                            (settings.sensitivity * ev.delta.x * window_scale).to_radians();
+                    }
                 }
 
                 delta_state.pitch = delta_state.pitch.clamp(-1.54, 1.54);

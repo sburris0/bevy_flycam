@@ -4,7 +4,7 @@
 ![docs.rs](https://img.shields.io/docsrs/bevy_flycam)
 
 
-A basic first-person fly camera for Bevy 0.8
+A basic first-person fly camera for Bevy 0.9
 
 ## Controls
 * WASD to move horizontally
@@ -25,7 +25,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 1. Add to `Cargo.toml` or copy `lib.rs` to your own file
 ```toml
 [dependencies]
-bevy = "0.8"
+bevy = "0.9"
 bevy_flycam = "*"
 ```
 
@@ -33,7 +33,7 @@ or
 
 ```toml
 [dependencies]
-bevy = "0.8"
+bevy = "0.9"
 bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 ```
 

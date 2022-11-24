@@ -33,10 +33,26 @@ impl Default for MovementSettings {
 pub struct FlyCam;
 
 /// Grabs/ungrabs mouse cursor
+#[cfg(not(target_os="macos"))]
 fn toggle_grab_cursor(window: &mut Window) {
     match window.cursor_grab_mode() {
         CursorGrabMode::None => {
             window.set_cursor_grab_mode(CursorGrabMode::Confined);
+            window.set_cursor_visibility(false);
+        }
+        _ => {
+            window.set_cursor_grab_mode(CursorGrabMode::None);
+            window.set_cursor_visibility(true);
+        }
+    }
+}
+
+/// Grabs/ungrabs mouse cursor
+#[cfg(target_os="macos")]
+fn toggle_grab_cursor(window: &mut Window) {
+    match window.cursor_grab_mode() {
+        CursorGrabMode::None => {
+            window.set_cursor_grab_mode(CursorGrabMode::Locked);
             window.set_cursor_visibility(false);
         }
         _ => {

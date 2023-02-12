@@ -4,15 +4,21 @@ use bevy_flycam::{FlyCam, MovementSettings, NoCameraPlayerPlugin};
 // From bevy examples:
 // https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs
 
-#[derive(Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(Clone, Eq, PartialEq, Debug, Hash, States)]
 enum ScrollType {
     MovementSpeed,
     Zoom,
 }
 
+impl Default for ScrollType {
+    fn default() -> Self {
+        Self::MovementSpeed
+    }
+}
+
 fn main() {
     App::new()
-        .insert_resource(Msaa { samples: 4 })
+        .insert_resource(Msaa::Sample4)
         .add_plugins(DefaultPlugins)
         //NoCameraPlayerPlugin as we provide the camera
         .add_plugin(NoCameraPlayerPlugin)
@@ -20,7 +26,7 @@ fn main() {
             ..Default::default()
         })
         // Setting initial state
-        .add_state(ScrollType::MovementSpeed)
+        .add_state::<ScrollType>()
         .add_startup_system(setup)
         .add_system(switch_scroll_type)
         .add_system(scroll)
@@ -68,17 +74,18 @@ fn setup(
 /// Listens for Z key being pressed and toggles between the two scroll-type states [`ScrollType`]
 #[allow(unused_must_use)]
 fn switch_scroll_type(
-    mut scroll_type: ResMut<State<ScrollType>>,
+    scroll_type: Res<State<ScrollType>>,
+    mut next_scroll_type: ResMut<NextState<ScrollType>>,
     keyboard_input: Res<Input<KeyCode>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Z) {
-        let result = match scroll_type.current() {
+        let result = match scroll_type.0 {
             ScrollType::MovementSpeed => ScrollType::Zoom,
             ScrollType::Zoom => ScrollType::MovementSpeed,
         };
 
         println!("{:?}", result);
-        scroll_type.set(result);
+        next_scroll_type.set(result);
     }
 }
 
@@ -90,7 +97,7 @@ fn scroll(
     mut query: Query<(&FlyCam, &mut Projection)>,
 ) {
     for event in mouse_wheel_events.iter() {
-        if *scroll_type.current() == ScrollType::MovementSpeed {
+        if scroll_type.0 == ScrollType::MovementSpeed {
             settings.speed = (settings.speed + event.y * 0.1).abs();
             println!("Speed: {:?}", settings.speed);
         } else {

@@ -10,11 +10,10 @@ repository = "https://github.com/sburris0/bevy_flycam/"
 readme = "README.md"
 keywords = ["gamedev", "bevy", "3d", "camera"]
 categories = ["game-engines", "game-development"]
-resolver = "2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-bevy = {version = "0.9", default-features = false, features = ["bevy_render", "bevy_core_pipeline", "bevy_asset"]}
+bevy = {git = "https://github.com/bevyengine/bevy", default-features = false, features = ["bevy_render", "bevy_core_pipeline", "bevy_asset"]}
 
 [dev-dependencies]
-bevy = {version = "0.9", default-features = false, features = ["x11", "wayland", "bevy_pbr", "bevy_core_pipeline", "bevy_asset"]}
+bevy = {git = "https://github.com/bevyengine/bevy", default-features = false, features = ["x11", "wayland", "bevy_pbr", "bevy_core_pipeline", "bevy_asset"]}

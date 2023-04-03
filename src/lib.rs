@@ -3,7 +3,7 @@ use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, PrimaryWindow};
 
-pub mod prelude{
+pub mod prelude {
     pub use crate::*;
 }
 

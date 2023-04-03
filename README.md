@@ -4,7 +4,7 @@
 ![docs.rs](https://img.shields.io/docsrs/bevy_flycam)
 
 
-A basic first-person fly camera for Bevy 0.9
+A basic first-person fly camera for Bevy 0.10
 
 ## Controls
 * WASD to move horizontally
@@ -25,7 +25,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 1. Add to `Cargo.toml` or copy `lib.rs` to your own file
 ```toml
 [dependencies]
-bevy = "0.9"
+bevy = "0.10"
 bevy_flycam = "*"
 ```
 
@@ -33,7 +33,7 @@ or
 
 ```toml
 [dependencies]
-bevy = "0.9"
+bevy = "0.10"
 bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 ```
 
@@ -78,9 +78,9 @@ fn main() {
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 bevy_flycam's crate version follows bevy's X version as shown:
-|bevy|bevy_flycam|
-|---|---|
-|0.X.Y|0.X|
+| bevy     | bevy_flycam |
+| :--      | :--         |
+| `0.10.0` | `0.10`      |
 
 ## Contributing
 PRs are very welcome.

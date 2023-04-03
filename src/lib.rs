@@ -220,6 +220,17 @@ fn cursor_grab(keys: Res<Input<KeyCode>>, mut windows: ResMut<Windows>) {
     }
 }
 
+// Grab cursor when an entity with FlyCam is added
+fn initial_grab_on_flycam_spawn(mut windows: ResMut<Windows>, query_added: Query<Entity, Added<FlyCam>>) {
+    if query_added.is_empty() { return; }
+    
+    if let Some(window) = windows.get_primary_mut() {
+        toggle_grab_cursor(window);
+    } else {
+        warn!("Primary window not found for `initial_grab_cursor`!");
+    }
+}
+
 /// Contains everything needed to add first-person fly camera behavior to your game
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
@@ -246,6 +257,7 @@ impl Plugin for NoCameraPlayerPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<InputState>()
             .init_resource::<MovementSettings>()
+            .add_system(initial_grab_on_flycam_spawn)
             .add_system(initial_grab_cursor.on_startup())
             .add_system(player_move)
             .add_system(player_look)

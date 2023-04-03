@@ -1,5 +1,5 @@
-use bevy::{input::mouse::MouseWheel, prelude::*, render::camera::Projection};
-use bevy_flycam::{FlyCam, MovementSettings, NoCameraPlayerPlugin};
+use bevy::{input::mouse::MouseWheel, prelude::*};
+use bevy_flycam::prelude::*;
 
 // From bevy examples:
 // https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs

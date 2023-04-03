@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-use bevy_flycam::MovementSettings;
-use bevy_flycam::PlayerPlugin;
+use bevy_flycam::prelude::*;
 
 //From bevy examples:
 //https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs

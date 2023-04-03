@@ -1,9 +1,5 @@
-// Remove the line below if you are copying this to your own project
-extern crate bevy_flycam;
-
 use bevy::prelude::*;
-use bevy_flycam::PlayerPlugin;
-use bevy_flycam::{KeyBindings, MovementSettings};
+use bevy_flycam::prelude::*;
 
 //From bevy examples:
 //https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs
@@ -17,14 +13,11 @@ fn main() {
             sensitivity: 0.00015, // default: 0.00012
             speed: 12.0,          // default: 12.0
         })
+        // Unreal movement layout
         .insert_resource(KeyBindings {
-            move_forward: KeyCode::A,
-            move_backward: KeyCode::Z,
-            move_left: KeyCode::Q,
-            move_right: KeyCode::W,
-            move_ascend: KeyCode::C,
-            move_descend: KeyCode::V,
-            toggle_grab_cursor: KeyCode::F,
+            move_ascend: KeyCode::E,
+            move_descend: KeyCode::Q,
+            ..Default::default()
         })
         .add_startup_system(setup)
         .run();

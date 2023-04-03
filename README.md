@@ -37,9 +37,9 @@ bevy = "0.10"
 bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 ```
 
-2. Include the `PlayerPlugin`
+2. Include the prelude:
 ```rust
-use bevy_flycam::PlayerPlugin;
+use bevy_flycam::prelude::*;
 ```
 This will spawn a camera for you. 
 Use `NoCameraPlayerPlugin` if you do not want this and make sure to use `.insert(FlyCam)` on your own camera or else this plugin won't know what to move.
@@ -59,7 +59,8 @@ Alternatively you can see the example `basic.rs` or `scroll.rs` located in the e
 You can run the example by cloning this repository and run the command: `cargo run --release --example basic`
 
 ## Customization
-To modify player movement speed or mouse sensitivity, import `bevy_flycam::MovementSettings` and add it as a resource:
+To modify player movement speed or mouse sensitivity add it as a resource. </br>
+Same thing goes for the keybindings used for moving the camera.
 ```Rust
 #[bevy_main]
 fn main() {
@@ -70,6 +71,11 @@ fn main() {
             sensitivity: 0.00015, // default: 0.00012
             speed: 12.0, // default: 12.0
         })
+        .insert_resource(KeyBindings {
+            move_ascend: KeyCode::E,
+            move_descend: KeyCode::Q,
+            ..Default::default()
+        })
         .run();
 }
 ```
@@ -77,10 +83,10 @@ fn main() {
 # Support
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
-bevy_flycam's crate version follows bevy's X version as shown:
+bevy_flycam's crate version follows bevy's minor version as shown:
 | bevy     | bevy_flycam |
 | :--      | :--         |
-| `0.10.0` | `0.10`      |
+| `0.10.X` | `0.10`      |
 
 ## Contributing
 PRs are very welcome.

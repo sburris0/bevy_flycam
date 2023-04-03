@@ -1,10 +1,4 @@
-// Remove the line below if you are copying this to your own project
-extern crate bevy_flycam;
-
-use bevy::{
-    input::mouse::MouseWheel, prelude::*, render::camera::Camera, render::camera::CameraProjection,
-    render::camera::PerspectiveProjection, window::Windows,
-};
+use bevy::{input::mouse::MouseWheel, prelude::*, render::camera::Projection};
 use bevy_flycam::{FlyCam, MovementSettings, NoCameraPlayerPlugin};
 
 // From bevy examples:
@@ -17,7 +11,7 @@ enum ScrollType {
 }
 
 fn main() {
-    App::build()
+    App::new()
         .insert_resource(Msaa { samples: 4 })
         .add_plugins(DefaultPlugins)
         //NoCameraPlayerPlugin as we provide the camera
@@ -27,9 +21,9 @@ fn main() {
         })
         // Setting initial state
         .add_state(ScrollType::MovementSpeed)
-        .add_startup_system(setup.system())
-        .add_system(switch_scroll_type.system())
-        .add_system(scroll.system())
+        .add_startup_system(setup)
+        .add_system(switch_scroll_type)
+        .add_system(scroll)
         .run();
 }
 
@@ -40,35 +34,38 @@ fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     // plane
-    commands.spawn_bundle(PbrBundle {
+    commands.spawn(PbrBundle {
         mesh: meshes.add(Mesh::from(shape::Plane { size: 5.0 })),
         material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
         ..Default::default()
     });
     // cube
-    commands.spawn_bundle(PbrBundle {
+    commands.spawn(PbrBundle {
         mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
         material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
         transform: Transform::from_xyz(0.0, 0.5, 0.0),
         ..Default::default()
     });
     // light
-    commands.spawn_bundle(LightBundle {
+    commands.spawn(PointLightBundle {
         transform: Transform::from_xyz(4.0, 8.0, 4.0),
         ..Default::default()
     });
 
     // camera
-    let camera = PerspectiveCameraBundle {
+    let camera = Camera3dBundle {
         transform: Transform::from_xyz(-2.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
         ..Default::default()
     };
 
     // add plugin
-    commands.spawn_bundle(camera).insert(FlyCam);
+    commands.spawn(camera).insert(FlyCam);
+
+    info!("Press 'Z' to switch between Movement Speed and Zoom");
+    info!("Changing the selected value by scrolling the mousewheel");
 }
 
-// Listens for Z key being pressed and toggles between the two scroll-type states
+/// Listens for Z key being pressed and toggles between the two scroll-type states [`ScrollType`]
 #[allow(unused_must_use)]
 fn switch_scroll_type(
     mut scroll_type: ResMut<State<ScrollType>>,
@@ -85,31 +82,23 @@ fn switch_scroll_type(
     }
 }
 
-// Depending on the state, the mouse-scroll changes either the movement speed or the field-of-view of the camera
+/// Depending on the state, the mouse-scroll changes either the movement speed or the field-of-view of the camera
 fn scroll(
     mut settings: ResMut<MovementSettings>,
     scroll_type: Res<State<ScrollType>>,
     mut mouse_wheel_events: EventReader<MouseWheel>,
-    windows: Res<Windows>,
-    mut query: Query<(&FlyCam, &mut Camera, &mut PerspectiveProjection)>,
+    mut query: Query<(&FlyCam, &mut Projection)>,
 ) {
     for event in mouse_wheel_events.iter() {
         if *scroll_type.current() == ScrollType::MovementSpeed {
             settings.speed = (settings.speed + event.y * 0.1).abs();
             println!("Speed: {:?}", settings.speed);
         } else {
-            for (_camera, mut camera, mut project) in query.iter_mut() {
-                project.fov = (project.fov - event.y * 0.01).abs();
-                let prim = windows.get_primary().unwrap();
-
-                //Calculate projection with new fov
-                project.update(prim.width(), prim.height());
-
-                //Update camera with the new fov
-                camera.projection_matrix = project.get_projection_matrix();
-                camera.depth_calculation = project.depth_calculation();
-
-                println!("FOV: {:?}", project.fov);
+            for (_camera, project) in query.iter_mut() {
+                if let Projection::Perspective(perspective) = project.into_inner() {
+                    perspective.fov = (perspective.fov - event.y * 0.01).abs();
+                    println!("FOV: {:?}", perspective.fov);
+                }
             }
         }
     }

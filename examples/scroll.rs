@@ -35,14 +35,15 @@ fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     // plane
-    commands.spawn(PbrBundle {
+    commands.spawn((PbrBundle {
         mesh: meshes.add(Mesh::from(shape::Plane {
             size: 5.0,
-            subdivisions: 0,
+            ..Default::default()
         })),
         material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
         ..Default::default()
-    });
+    },));
+
     // cube
     commands.spawn(PbrBundle {
         mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
@@ -50,20 +51,21 @@ fn setup(
         transform: Transform::from_xyz(0.0, 0.5, 0.0),
         ..Default::default()
     });
+
     // light
     commands.spawn(PointLightBundle {
         transform: Transform::from_xyz(4.0, 8.0, 4.0),
         ..Default::default()
     });
 
-    // camera
-    let camera = Camera3dBundle {
-        transform: Transform::from_xyz(-2.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
-        ..Default::default()
-    };
-
-    // add plugin
-    commands.spawn(camera).insert(FlyCam);
+    // add camera
+    commands.spawn((
+        Camera3dBundle {
+            transform: Transform::from_xyz(-2.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
+            ..Default::default()
+        },
+        FlyCam,
+    ));
 
     info!("Press 'Z' to switch between Movement Speed and Zoom");
     info!("Changing the selected value by scrolling the mousewheel");

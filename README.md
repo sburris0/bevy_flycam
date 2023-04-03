@@ -59,8 +59,8 @@ Alternatively you can see the example `basic.rs` or `scroll.rs` located in the e
 You can run the example by cloning this repository and run the command: `cargo run --release --example basic`
 
 ## Customization
-To modify player movement speed or mouse sensitivity
-and add it as a resource:
+To modify player movement speed or mouse sensitivity add it as a resource. </br>
+Same thing goes for the keybindings used for moving the camera.
 ```Rust
 #[bevy_main]
 fn main() {

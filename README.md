@@ -27,40 +27,40 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
 1. Add to `Cargo.toml` or copy `lib.rs` to your own file
 
-```toml
-[dependencies]
-bevy = "0.10"
-bevy_flycam = "*"
-```
+    ```toml
+    [dependencies]
+    bevy = "0.10"
+    bevy_flycam = "*"
+    ```
 
-or
+    or
 
-```toml
-[dependencies]
-bevy = "0.10"
-bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
-```
+    ```toml
+    [dependencies]
+    bevy = "0.10"
+    bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
+    ```
 
 2. Include the prelude:
 
-```rust
-use bevy_flycam::prelude::*;
-```
+    ```rust
+    use bevy_flycam::prelude::*;
+    ```
 
-This will spawn a camera for you.
-Use `NoCameraPlayerPlugin` if you do not want this and make sure to use `.insert(FlyCam)` on your own camera or else this plugin won't know what to move.
+    This will spawn a camera for you.
+    Use `NoCameraPlayerPlugin` if you do not want this and make sure to use `.insert(FlyCam)` on your own camera or else this plugin won't know what to move.
 
 3. Add the `PlayerPlugin`:
 
-```rust
-#[bevy_main]
-fn main() {
-    App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(PlayerPlugin)
-        .run();
-}
-```
+    ```rust
+    #[bevy_main]
+    fn main() {
+        App::new()
+            .add_plugins(DefaultPlugins)
+            .add_plugin(PlayerPlugin)
+            .run();
+    }
+    ```
 
 Alternatively you can see the example `basic.rs` or `scroll.rs` located in the examples folder.
 You can run the example by cloning this repository and run the command: `cargo run --release --example basic`
@@ -89,7 +89,7 @@ fn main() {
 }
 ```
 
-# Support
+## Support
 
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 

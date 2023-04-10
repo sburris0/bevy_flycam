@@ -227,6 +227,7 @@ impl Plugin for NoCameraPlayerPlugin {
         app.init_resource::<InputState>()
             .init_resource::<MovementSettings>()
             .init_resource::<KeyBindings>()
+            .add_system(initial_grab_cursor.on_startup())
             .add_system(initial_grab_on_flycam_spawn.on_startup())
             .add_system(player_move)
             .add_system(player_look)

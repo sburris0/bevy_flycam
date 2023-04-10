@@ -86,7 +86,7 @@ fn main() {
 bevy_flycam's crate version follows bevy's minor version as shown:
 | bevy     | bevy_flycam |
 | :--      | :--         |
-| `0.10.X` | `0.10`      |
+| `0.10.1` | `0.10.1`    |
 
 ## Contributing
 PRs are very welcome.

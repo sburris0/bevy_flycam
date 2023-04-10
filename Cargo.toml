@@ -1,6 +1,6 @@
 [package]
 name = "bevy_flycam"
-version = "0.10.0"
+version = "0.10.1"
 authors = ["Spencer Burris <sburris@posteo.net>"]
 edition = "2021"
 license = "ISC"

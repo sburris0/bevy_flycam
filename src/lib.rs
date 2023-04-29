@@ -221,6 +221,7 @@ impl Plugin for PlayerPlugin {
         #[cfg(target_arch = "wasm32")]
         app
           .insert_resource(LocalResource::default())
+          .insert_resource(WasmResource::default())
           .add_startup_system(startup)
           .add_system(wasm_cursor_grab)
           .add_system(player_look_wasm);
@@ -242,6 +243,25 @@ impl Plugin for NoCameraPlayerPlugin {
     }
 }
 
+
+
+
+#[cfg(target_arch = "wasm32")]
+#[derive(Resource)]
+pub struct WasmResource {
+    pub pointer_lock_enabled: bool,
+}
+
+impl Default for WasmResource {
+    fn default() -> Self {
+        Self {
+            pointer_lock_enabled: true,
+        }
+    }
+}
+
+
+
 #[cfg(target_arch = "wasm32")]
 fn startup(local_res: Res<LocalResource>,) {
   let send_mouse_move = local_res.send_mouse_move.clone();
@@ -255,9 +275,15 @@ fn startup(local_res: Res<LocalResource>,) {
 }
 
 #[cfg(target_arch = "wasm32")]
-fn wasm_cursor_grab(mouse: Res<Input<MouseButton>>,) {
-  if mouse.just_pressed(MouseButton::Left) {
-    html_body().request_pointer_lock();
+fn wasm_cursor_grab(
+  mouse: Res<Input<MouseButton>>,
+  wasm_res: Res<WasmResource>,
+) {
+  if wasm_res.pointer_lock_enabled {
+    if mouse.just_pressed(MouseButton::Left) {
+      html_body().request_pointer_lock();
+      info!("Locked");
+    }
   }
 }
 

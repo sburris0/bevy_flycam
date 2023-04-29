@@ -266,8 +266,6 @@ fn player_look_wasm(
   local_res: Res<LocalResource>,
   primary_window: Query<&Window, With<PrimaryWindow>>,
   settings: Res<MovementSettings>,
-  mut state: ResMut<InputState>,
-  motion: Res<Events<MouseMotion>>,
   mut query: Query<&mut Transform, With<FlyCam>>,
 ) {
   let mut delta_x = 0.0;
@@ -332,4 +330,3 @@ impl Default for LocalResource {
 use web_sys::HtmlElement;
 use flume::*;
 use wasm_bindgen::prelude::*;
-use web_sys::ErrorEvent;

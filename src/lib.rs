@@ -222,6 +222,7 @@ impl Plugin for PlayerPlugin {
         app
           .insert_resource(LocalResource::default())
           .add_startup_system(startup)
+          .add_system(wasm_cursor_grab)
           .add_system(player_look_wasm);
     }
 }
@@ -241,6 +242,7 @@ impl Plugin for NoCameraPlayerPlugin {
     }
 }
 
+#[cfg(target_arch = "wasm32")]
 fn startup(local_res: Res<LocalResource>,) {
   let send_mouse_move = local_res.send_mouse_move.clone();
   let cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
@@ -252,6 +254,14 @@ fn startup(local_res: Res<LocalResource>,) {
   cb.forget();
 }
 
+#[cfg(target_arch = "wasm32")]
+fn wasm_cursor_grab(mouse: Res<Input<MouseButton>>,) {
+  if mouse.just_pressed(MouseButton::Left) {
+    html_body().request_pointer_lock();
+  }
+}
+
+#[cfg(target_arch = "wasm32")]
 fn player_look_wasm(
   local_res: Res<LocalResource>,
   primary_window: Query<&Window, With<PrimaryWindow>>,
@@ -290,6 +300,15 @@ fn player_look_wasm(
   }
 }
 
+#[cfg(target_arch = "wasm32")]
+pub fn html_body() -> HtmlElement {
+  let window = web_sys::window().expect("no global `window` exists");
+  let document = window.document().expect("should have a document on window");
+  let body = document.body().expect("document should have a body");
+  body
+}
+
+#[cfg(target_arch = "wasm32")]
 #[derive(Resource)]
 struct LocalResource {
   send_mouse_move: Sender<(f32, f32)>,
@@ -297,6 +316,7 @@ struct LocalResource {
 
 }
 
+#[cfg(target_arch = "wasm32")]
 impl Default for LocalResource {
   fn default() -> Self {
     // Set to 100 to prevent panics because it is sending data while system is still loading
@@ -308,6 +328,7 @@ impl Default for LocalResource {
   }
 }
 
+#[cfg(target_arch = "wasm32")]
 use web_sys::HtmlElement;
 use flume::*;
 use wasm_bindgen::prelude::*;

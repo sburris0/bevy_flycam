@@ -217,6 +217,12 @@ impl Plugin for PlayerPlugin {
             .add_system(player_move)
             .add_system(player_look)
             .add_system(cursor_grab);
+
+        #[cfg(target_arch = "wasm32")]
+        app
+          .insert_resource(LocalResource::default())
+          .add_startup_system(startup)
+          .add_system(player_look_wasm);
     }
 }
 
@@ -234,3 +240,75 @@ impl Plugin for NoCameraPlayerPlugin {
             .add_system(cursor_grab);
     }
 }
+
+fn startup(local_res: Res<LocalResource>,) {
+  let send_mouse_move = local_res.send_mouse_move.clone();
+  let cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+    let _ = send_mouse_move.send((event.movement_x() as f32, event.movement_y() as f32));
+  }) as Box<dyn FnMut(web_sys::MouseEvent)>);
+
+  let window = web_sys::window().expect("no global `window` exists");
+  window.set_onmousemove(Some(cb.as_ref().unchecked_ref()));
+  cb.forget();
+}
+
+fn player_look_wasm(
+  local_res: Res<LocalResource>,
+  primary_window: Query<&Window, With<PrimaryWindow>>,
+  settings: Res<MovementSettings>,
+  mut state: ResMut<InputState>,
+  motion: Res<Events<MouseMotion>>,
+  mut query: Query<&mut Transform, With<FlyCam>>,
+) {
+  let mut delta_x = 0.0;
+  let mut delta_y = 0.0;
+  for (x, y) in local_res.recv_mouse_move.drain() {
+    delta_x = x;
+    delta_y = y;
+  }
+  if let Ok(window) = primary_window.get_single() {
+      for mut transform in query.iter_mut() {
+          let (mut yaw, mut pitch, _) = transform.rotation.to_euler(EulerRot::YXZ);
+          match window.cursor.grab_mode {
+              CursorGrabMode::None => (),
+              _ => {
+                  // Using smallest of height or width ensures equal vertical and horizontal sensitivity
+                  let window_scale = window.height().min(window.width());
+                  pitch -= (settings.sensitivity * delta_y * window_scale).to_radians();
+                  yaw -= (settings.sensitivity * delta_x * window_scale).to_radians();
+              }
+          }
+
+          pitch = pitch.clamp(-1.54, 1.54);
+
+          // Order is important to prevent unintended roll
+          transform.rotation =
+              Quat::from_axis_angle(Vec3::Y, yaw) * Quat::from_axis_angle(Vec3::X, pitch);
+      }
+  } else {
+      warn!("Primary window not found for `player_look`!");
+  }
+}
+
+#[derive(Resource)]
+struct LocalResource {
+  send_mouse_move: Sender<(f32, f32)>,
+  recv_mouse_move: Receiver<(f32, f32)>,
+
+}
+
+impl Default for LocalResource {
+  fn default() -> Self {
+    // Set to 100 to prevent panics because it is sending data while system is still loading
+    let (send_mouse_move, recv_mouse_move) = flume::bounded(100);
+    Self {
+      send_mouse_move: send_mouse_move,
+      recv_mouse_move: recv_mouse_move,
+    }
+  }
+}
+
+use web_sys::HtmlElement;
+use flume::*;
+use wasm_bindgen::prelude::*;
+use web_sys::ErrorEvent;

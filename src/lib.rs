@@ -220,7 +220,6 @@ impl Plugin for PlayerPlugin {
 
         #[cfg(target_arch = "wasm32")]
         app
-          .insert_resource(LocalResource::default())
           .insert_resource(WasmResource::default())
           .add_startup_system(startup)
           .add_system(wasm_cursor_grab)
@@ -245,26 +244,9 @@ impl Plugin for NoCameraPlayerPlugin {
 
 
 
-
 #[cfg(target_arch = "wasm32")]
-#[derive(Resource)]
-pub struct WasmResource {
-    pub pointer_lock_enabled: bool,
-}
-
-impl Default for WasmResource {
-    fn default() -> Self {
-        Self {
-            pointer_lock_enabled: true,
-        }
-    }
-}
-
-
-
-#[cfg(target_arch = "wasm32")]
-fn startup(local_res: Res<LocalResource>,) {
-  let send_mouse_move = local_res.send_mouse_move.clone();
+fn startup(wasm_res: Res<WasmResource>,) {
+  let send_mouse_move = wasm_res.send_mouse_move.clone();
   let cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
     let _ = send_mouse_move.send((event.movement_x() as f32, event.movement_y() as f32));
   }) as Box<dyn FnMut(web_sys::MouseEvent)>);
@@ -282,24 +264,25 @@ fn wasm_cursor_grab(
   if wasm_res.pointer_lock_enabled {
     if mouse.just_pressed(MouseButton::Left) {
       html_body().request_pointer_lock();
-      info!("Locked");
+      // info!("Locked");
     }
   }
 }
 
 #[cfg(target_arch = "wasm32")]
 fn player_look_wasm(
-  local_res: Res<LocalResource>,
+  wasm_res: Res<WasmResource>,
   primary_window: Query<&Window, With<PrimaryWindow>>,
   settings: Res<MovementSettings>,
   mut query: Query<&mut Transform, With<FlyCam>>,
 ) {
   let mut delta_x = 0.0;
   let mut delta_y = 0.0;
-  for (x, y) in local_res.recv_mouse_move.drain() {
+  for (x, y) in wasm_res.recv_mouse_move.drain() {
     delta_x = x;
     delta_y = y;
   }
+
   if let Ok(window) = primary_window.get_single() {
       for mut transform in query.iter_mut() {
           let (mut yaw, mut pitch, _) = transform.rotation.to_euler(EulerRot::YXZ);
@@ -334,20 +317,21 @@ pub fn html_body() -> HtmlElement {
 
 #[cfg(target_arch = "wasm32")]
 #[derive(Resource)]
-struct LocalResource {
+pub struct WasmResource {
   send_mouse_move: Sender<(f32, f32)>,
   recv_mouse_move: Receiver<(f32, f32)>,
-
+  pub pointer_lock_enabled: bool,
 }
 
 #[cfg(target_arch = "wasm32")]
-impl Default for LocalResource {
+impl Default for WasmResource {
   fn default() -> Self {
     // Set to 100 to prevent panics because it is sending data while system is still loading
     let (send_mouse_move, recv_mouse_move) = flume::bounded(100);
     Self {
       send_mouse_move: send_mouse_move,
       recv_mouse_move: recv_mouse_move,
+      pointer_lock_enabled: true,
     }
   }
 }

@@ -220,10 +220,10 @@ impl Plugin for PlayerPlugin {
 
         #[cfg(target_arch = "wasm32")]
         app
-          .insert_resource(WasmResource::default())
-          .add_startup_system(startup)
-          .add_system(wasm_cursor_grab)
-          .add_system(player_look_wasm);
+            .insert_resource(WasmResource::default())
+            .add_startup_system(startup)
+            .add_system(wasm_cursor_grab)
+            .add_system(player_look_wasm);
     }
 }
 
@@ -239,6 +239,13 @@ impl Plugin for NoCameraPlayerPlugin {
             .add_system(player_move)
             .add_system(player_look)
             .add_system(cursor_grab);
+
+        #[cfg(target_arch = "wasm32")]
+        app
+            .insert_resource(WasmResource::default())
+            .add_startup_system(startup)
+            .add_system(wasm_cursor_grab)
+            .add_system(player_look_wasm);
     }
 }
 

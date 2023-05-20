@@ -237,8 +237,7 @@ impl Plugin for NoCameraPlayerPlugin {
             .add_system(initial_grab_cursor.on_startup())
             .add_system(initial_grab_on_flycam_spawn.on_startup())
             .add_system(player_move)
-            .add_system(player_look)
-            .add_system(cursor_grab);
+            .add_system(player_look);
 
         #[cfg(target_arch = "wasm32")]
         app
@@ -246,6 +245,23 @@ impl Plugin for NoCameraPlayerPlugin {
             .add_startup_system(startup)
             .add_system(wasm_cursor_grab)
             .add_system(player_look_wasm);
+    }
+}
+
+pub struct NoCameraAndGrabPlugin;
+impl Plugin for NoCameraAndGrabPlugin {
+    fn build(&self, app: &mut App) {
+      app.init_resource::<InputState>()
+          .init_resource::<MovementSettings>()
+          .init_resource::<KeyBindings>()
+          .add_system(player_move)
+          .add_system(player_look);
+
+      #[cfg(target_arch = "wasm32")]
+      app
+          .insert_resource(WasmResource::default())
+          .add_startup_system(startup)
+          .add_system(player_look_wasm);
     }
 }
 

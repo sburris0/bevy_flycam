@@ -254,8 +254,11 @@ impl Plugin for NoCameraAndGrabPlugin {
       app.init_resource::<InputState>()
           .init_resource::<MovementSettings>()
           .init_resource::<KeyBindings>()
-          .add_system(player_move)
-          .add_system(player_look);
+          .add_system(player_move);
+
+      #[cfg(not(target_arch = "wasm32"))]
+      app
+        .add_system(player_look);
 
       #[cfg(target_arch = "wasm32")]
       app

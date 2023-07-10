@@ -4,7 +4,7 @@
 ![Crates.io](https://img.shields.io/crates/l/bevy_flycam)
 ![docs.rs](https://img.shields.io/docsrs/bevy_flycam)
 
-A basic first-person fly camera for Bevy 0.10
+A basic first-person fly camera for Bevy 0.11
 
 ## Controls
 
@@ -29,7 +29,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.10"
+    bevy = "0.11"
     bevy_flycam = "*"
     ```
 
@@ -37,7 +37,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.10"
+    bevy = "0.11"
     bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
     ```
 
@@ -57,7 +57,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
     fn main() {
         App::new()
             .add_plugins(DefaultPlugins)
-            .add_plugin(PlayerPlugin)
+            .add_plugins(PlayerPlugin)
             .run();
     }
     ```
@@ -75,7 +75,7 @@ Same thing goes for the keybindings used for moving the camera.
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugin(PlayerPlugin)
+        .add_plugins(PlayerPlugin)
         .insert_resource(MovementSettings {
             sensitivity: 0.00015, // default: 0.00012
             speed: 12.0, // default: 12.0
@@ -96,6 +96,7 @@ fn main() {
 bevy_flycam's crate version follows bevy's minor version as shown:
 | bevy     | bevy_flycam |
 | :--      | :--         |
+| `0.11.0` | `0.11.0`    |
 | `0.10.1` | `0.10.1`    |
 
 ## Contributing

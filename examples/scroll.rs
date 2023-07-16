@@ -16,15 +16,15 @@ fn main() {
         .insert_resource(Msaa::Sample4)
         .add_plugins(DefaultPlugins)
         //NoCameraPlayerPlugin as we provide the camera
-        .add_plugin(NoCameraPlayerPlugin)
+        .add_plugins(NoCameraPlayerPlugin)
         .insert_resource(MovementSettings {
             ..Default::default()
         })
         // Setting initial state
         .add_state::<ScrollType>()
-        .add_system(setup.on_startup())
-        .add_system(switch_scroll_type)
-        .add_system(scroll)
+        .add_systems(Startup, setup)
+        .add_systems(Update, switch_scroll_type)
+        .add_systems(Update, scroll)
         .run();
 }
 
@@ -78,7 +78,7 @@ fn switch_scroll_type(
     keyboard_input: Res<Input<KeyCode>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Z) {
-        let result = match scroll_type.0 {
+        let result = match scroll_type.get() {
             ScrollType::MovementSpeed => ScrollType::Zoom,
             ScrollType::Zoom => ScrollType::MovementSpeed,
         };
@@ -96,7 +96,7 @@ fn scroll(
     mut query: Query<(&FlyCam, &mut Projection)>,
 ) {
     for event in mouse_wheel_events.iter() {
-        if scroll_type.0 == ScrollType::MovementSpeed {
+        if *scroll_type.get() == ScrollType::MovementSpeed {
             settings.speed = (settings.speed + event.y * 0.1).abs();
             println!("Speed: {:?}", settings.speed);
         } else {

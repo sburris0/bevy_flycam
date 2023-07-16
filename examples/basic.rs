@@ -8,12 +8,12 @@ fn main() {
     App::new()
         .insert_resource(Msaa::Sample4)
         .add_plugins(DefaultPlugins)
-        .add_plugin(PlayerPlugin)
+        .add_plugins(PlayerPlugin)
         .insert_resource(MovementSettings {
             sensitivity: 0.00015, // default: 0.00012
             speed: 12.0,          // default: 12.0
         })
-        .add_system(setup.on_startup())
+        .add_systems(Startup, setup)
         .run();
 }
 

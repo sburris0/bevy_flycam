@@ -217,6 +217,13 @@ impl Plugin for PlayerPlugin {
             .add_system(player_move)
             .add_system(player_look)
             .add_system(cursor_grab);
+
+        #[cfg(target_arch = "wasm32")]
+        app
+            .insert_resource(WasmResource::default())
+            .add_startup_system(startup)
+            .add_system(wasm_cursor_grab)
+            .add_system(player_look_wasm);
     }
 }
 
@@ -230,7 +237,127 @@ impl Plugin for NoCameraPlayerPlugin {
             .add_system(initial_grab_cursor.on_startup())
             .add_system(initial_grab_on_flycam_spawn.on_startup())
             .add_system(player_move)
-            .add_system(player_look)
-            .add_system(cursor_grab);
+            .add_system(player_look);
+
+        #[cfg(target_arch = "wasm32")]
+        app
+            .insert_resource(WasmResource::default())
+            .add_startup_system(startup)
+            .add_system(wasm_cursor_grab)
+            .add_system(player_look_wasm);
     }
 }
+
+pub struct NoCameraAndGrabPlugin;
+impl Plugin for NoCameraAndGrabPlugin {
+    fn build(&self, app: &mut App) {
+      app.init_resource::<InputState>()
+          .init_resource::<MovementSettings>()
+          .init_resource::<KeyBindings>()
+          .add_system(player_move);
+
+      #[cfg(not(target_arch = "wasm32"))]
+      app
+        .add_system(player_look);
+
+      #[cfg(target_arch = "wasm32")]
+      app
+          .insert_resource(WasmResource::default())
+          .add_startup_system(startup)
+          .add_system(player_look_wasm);
+    }
+}
+
+
+
+#[cfg(target_arch = "wasm32")]
+fn startup(wasm_res: Res<WasmResource>,) {
+    let send_mouse_move = wasm_res.send_mouse_move.clone();
+    let cb = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+        let _ = send_mouse_move.send((event.movement_x() as f32, event.movement_y() as f32));
+    }) as Box<dyn FnMut(web_sys::MouseEvent)>);
+
+    let window = web_sys::window().expect("no global `window` exists");
+    window.set_onmousemove(Some(cb.as_ref().unchecked_ref()));
+    cb.forget();
+}
+
+#[cfg(target_arch = "wasm32")]
+fn wasm_cursor_grab(
+  mouse: Res<Input<MouseButton>>,
+  wasm_res: Res<WasmResource>,
+) {
+    if wasm_res.pointer_lock_enabled {
+        if mouse.just_pressed(MouseButton::Left) {
+            html_body().request_pointer_lock();
+            info!("Locked");
+        }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+fn player_look_wasm(
+  wasm_res: Res<WasmResource>,
+  primary_window: Query<&Window, With<PrimaryWindow>>,
+  settings: Res<MovementSettings>,
+  mut query: Query<&mut Transform, With<FlyCam>>,
+) {
+    let mut delta_x = 0.0;
+    let mut delta_y = 0.0;
+    for (x, y) in wasm_res.recv_mouse_move.drain() {
+        delta_x = x;
+        delta_y = y;
+    }
+
+    if let Ok(window) = primary_window.get_single() {
+        for mut transform in query.iter_mut() {
+            let (mut yaw, mut pitch, _) = transform.rotation.to_euler(EulerRot::YXZ);
+
+            let window_scale = window.height().min(window.width());
+            pitch -= (settings.sensitivity * delta_y * window_scale).to_radians();
+            yaw -= (settings.sensitivity * delta_x * window_scale).to_radians();
+
+            pitch = pitch.clamp(-1.54, 1.54);
+
+            // Order is important to prevent unintended roll
+            transform.rotation =
+                Quat::from_axis_angle(Vec3::Y, yaw) * Quat::from_axis_angle(Vec3::X, pitch);
+        }
+    } else {
+        warn!("Primary window not found for `player_look`!");
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+pub fn html_body() -> HtmlElement {
+    let window = web_sys::window().expect("no global `window` exists");
+    let document = window.document().expect("should have a document on window");
+    let body = document.body().expect("document should have a body");
+    body
+    }
+
+#[cfg(target_arch = "wasm32")]
+#[derive(Resource)]
+pub struct WasmResource {
+    send_mouse_move: Sender<(f32, f32)>,
+    recv_mouse_move: Receiver<(f32, f32)>,
+    pub pointer_lock_enabled: bool,
+}
+
+#[cfg(target_arch = "wasm32")]
+impl Default for WasmResource {
+    fn default() -> Self {
+        // Set to 100 to prevent panics because it is sending data while system is still loading
+        let (send_mouse_move, recv_mouse_move) = flume::bounded(100);
+        Self {
+        send_mouse_move: send_mouse_move,
+        recv_mouse_move: recv_mouse_move,
+        pointer_lock_enabled: true,
+        }
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+use web_sys::HtmlElement;
+use flume::*;
+use wasm_bindgen::prelude::*;

@@ -14,6 +14,17 @@ categories = ["game-engines", "game-development"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 bevy = { version = "0.10", default-features = false, features = ["bevy_render", "bevy_core_pipeline", "bevy_asset"] }
+flume = "0.10.14"
+wasm-bindgen = "0.2.84"
 
 [dev-dependencies]
 bevy = { version = "0.10", default-features = false, features = ["x11", "wayland", "bevy_pbr", "bevy_core_pipeline", "bevy_asset"] }
+
+[dependencies.web-sys]
+version = "0.3.61"
+features = [
+  "Document",
+  "HtmlElement", 
+  "ErrorEvent", 
+  "Window",
+]

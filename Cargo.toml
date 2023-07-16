@@ -16,4 +16,4 @@ categories = ["game-engines", "game-development"]
 bevy = { version = "0.11", default-features = false, features = ["bevy_render", "bevy_core_pipeline", "bevy_asset"] }
 
 [dev-dependencies]
-bevy = { version = "0.11", default-features = false, features = ["x11", "wayland", "bevy_pbr", "bevy_core_pipeline", "bevy_asset"] }
+bevy = { version = "0.11", default-features = false, features = ["x11", "wayland", "bevy_pbr", "bevy_core_pipeline", "bevy_asset", "ktx2", "zstd", "tonemapping_luts"] }

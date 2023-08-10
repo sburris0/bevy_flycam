@@ -1,5 +1,5 @@
 use bevy::ecs::event::{Events, ManualEventReader};
-use bevy::input::mouse::MouseMotion;
+use bevy::input::mouse::{MouseMotion, MouseWheel};
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, PrimaryWindow};
 
@@ -205,6 +205,20 @@ fn initial_grab_on_flycam_spawn(
     }
 }
 
+// Changes movement speed when scrolling
+fn scroll_to_change_speed(
+    mut scroll: EventReader<MouseWheel>,
+    mut settings: ResMut<MovementSettings>,
+) {
+    for ev in scroll.iter() {
+        if ev.y > 0. {
+            settings.speed += ev.y;
+        } else if ev.y < 0. {
+            settings.speed -= ev.y;
+        }
+    }
+}
+
 /// Contains everything needed to add first-person fly camera behavior to your game
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
@@ -216,7 +230,8 @@ impl Plugin for PlayerPlugin {
             .add_system(initial_grab_cursor.on_startup())
             .add_system(player_move)
             .add_system(player_look)
-            .add_system(cursor_grab);
+            .add_system(cursor_grab)
+            .add_system(scroll_to_change_speed);
     }
 }
 

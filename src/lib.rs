@@ -209,7 +209,19 @@ fn initial_grab_on_flycam_spawn(
 fn scroll_to_change_speed(
     mut scroll: EventReader<MouseWheel>,
     mut settings: ResMut<MovementSettings>,
+    mut primary_window: Query<&mut Window, With<PrimaryWindow>>,
 ) {
+    // Check if primary window exists
+    if let Ok(window) = &mut primary_window.get_single_mut() {
+        // Check if cursor is grabbed
+        if window.cursor.grab_mode == CursorGrabMode::None {
+            return;
+        }
+    } else {
+        warn!("Primary window not found for `scroll_to_change_speed`!");
+        return;
+    }
+
     for ev in scroll.iter() {
         if ev.y > 0. {
             settings.speed += ev.y;

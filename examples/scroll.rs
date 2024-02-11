@@ -21,7 +21,7 @@ fn main() {
             ..Default::default()
         })
         // Setting initial state
-        .add_state::<ScrollType>()
+        .init_state::<ScrollType>()
         .add_systems(Startup, setup)
         .add_systems(Update, switch_scroll_type)
         .add_systems(Update, scroll)
@@ -36,18 +36,15 @@ fn setup(
 ) {
     // plane
     commands.spawn((PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Plane {
-            size: 5.0,
-            ..Default::default()
-        })),
-        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
+        mesh: meshes.add(Plane3d::new(Vec3::Y).mesh().size(5.0, 5.0)),
+        material: materials.add(Color::rgb(0.3, 0.5, 0.3)),
         ..Default::default()
     },));
 
     // cube
     commands.spawn(PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
-        material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
+        mesh: meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
+        material: materials.add(Color::rgb(0.8, 0.7, 0.6)),
         transform: Transform::from_xyz(0.0, 0.5, 0.0),
         ..Default::default()
     });
@@ -75,9 +72,9 @@ fn setup(
 fn switch_scroll_type(
     scroll_type: Res<State<ScrollType>>,
     mut next_scroll_type: ResMut<NextState<ScrollType>>,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::Z) {
+    if keyboard_input.just_pressed(KeyCode::KeyZ) {
         let result = match scroll_type.get() {
             ScrollType::MovementSpeed => ScrollType::Zoom,
             ScrollType::Zoom => ScrollType::MovementSpeed,
@@ -95,7 +92,7 @@ fn scroll(
     mut mouse_wheel_events: EventReader<MouseWheel>,
     mut query: Query<(&FlyCam, &mut Projection)>,
 ) {
-    for event in mouse_wheel_events.iter() {
+    for event in mouse_wheel_events.read() {
         if *scroll_type.get() == ScrollType::MovementSpeed {
             settings.speed = (settings.speed + event.y * 0.1).abs();
             println!("Speed: {:?}", settings.speed);

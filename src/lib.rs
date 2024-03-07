@@ -44,10 +44,10 @@ pub struct KeyBindings {
 impl Default for KeyBindings {
     fn default() -> Self {
         Self {
-            move_forward: KeyCode::W,
-            move_backward: KeyCode::S,
-            move_left: KeyCode::A,
-            move_right: KeyCode::D,
+            move_forward: KeyCode::KeyW,
+            move_backward: KeyCode::KeyS,
+            move_left: KeyCode::KeyA,
+            move_right: KeyCode::KeyD,
             move_ascend: KeyCode::Space,
             move_descend: KeyCode::ShiftLeft,
             toggle_grab_cursor: KeyCode::Escape,
@@ -96,7 +96,7 @@ fn setup_player(mut commands: Commands) {
 
 /// Handles keyboard input and movement
 fn player_move(
-    keys: Res<Input<KeyCode>>,
+    keys: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     primary_window: Query<&Window, With<PrimaryWindow>>,
     settings: Res<MovementSettings>,
@@ -176,7 +176,7 @@ fn player_look(
 }
 
 fn cursor_grab(
-    keys: Res<Input<KeyCode>>,
+    keys: Res<ButtonInput<KeyCode>>,
     key_bindings: Res<KeyBindings>,
     mut primary_window: Query<&mut Window, With<PrimaryWindow>>,
 ) {

@@ -15,8 +15,8 @@ fn main() {
         })
         // Unreal movement layout
         .insert_resource(KeyBindings {
-            move_ascend: KeyCode::E,
-            move_descend: KeyCode::Q,
+            move_ascend: KeyCode::KeyE,
+            move_descend: KeyCode::KeyQ,
             ..Default::default()
         })
         .add_systems(Startup, setup)
@@ -31,18 +31,15 @@ fn setup(
 ) {
     // plane
     commands.spawn((PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Plane {
-            size: 5.0,
-            ..Default::default()
-        })),
-        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
+        mesh: meshes.add(Plane3d::new(Vec3::Y).mesh().size(5.0, 5.0)),
+        material: materials.add(Color::rgb(0.3, 0.5, 0.3)),
         ..Default::default()
     },));
 
     // cube
     commands.spawn(PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
-        material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
+        mesh: meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
+        material: materials.add(Color::rgb(0.8, 0.7, 0.6)),
         transform: Transform::from_xyz(0.0, 0.5, 0.0),
         ..Default::default()
     });

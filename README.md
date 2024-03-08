@@ -81,6 +81,7 @@ fn main() {
         .insert_resource(MovementSettings {
             sensitivity: 0.00015, // default: 0.00012
             speed: 12.0, // default: 12.0
+            up: Vec3::Y,
         })
         .insert_resource(KeyBindings {
             move_ascend: KeyCode::E,

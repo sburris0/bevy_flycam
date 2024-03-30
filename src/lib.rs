@@ -130,11 +130,11 @@ fn player_move(
                         }
                     }
                 }
-
-                velocity = velocity.normalize_or_zero();
-
-                transform.translation += velocity * time.delta_seconds() * settings.speed
             }
+
+            velocity = velocity.normalize_or_zero();
+
+            transform.translation += velocity * time.delta_seconds() * settings.speed
         }
     } else {
         warn!("Primary window not found for `player_move`!");

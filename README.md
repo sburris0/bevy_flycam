@@ -4,7 +4,7 @@
 ![Crates.io](https://img.shields.io/crates/l/bevy_flycam)
 ![docs.rs](https://img.shields.io/docsrs/bevy_flycam)
 
-A basic first-person fly camera for Bevy 0.13
+A basic first-person fly camera for Bevy 0.14
 
 ## Controls
 
@@ -29,7 +29,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.13"
+    bevy = "0.14"
     bevy_flycam = "*"
     ```
 
@@ -37,7 +37,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.13"
+    bevy = "0.14"
     bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
     ```
 
@@ -123,6 +123,7 @@ fn setup(mut commands: Commands) {
 bevy_flycam's crate version follows bevy's minor version as shown:
 | bevy     | bevy_flycam |
 | :--      | :--         |
+| `0.14.0` | `0.14.0`    |
 | `0.13.0` | `0.13.0`    |
 | `0.12.0` | `0.12.0`    |
 | `0.11.0` | `0.11.0`    |

@@ -18,6 +18,7 @@ struct InputState {
 pub struct MovementSettings {
     pub sensitivity: f32,
     pub speed: f32,
+    pub up: Vec3,
 }
 
 impl Default for MovementSettings {
@@ -25,6 +26,7 @@ impl Default for MovementSettings {
         Self {
             sensitivity: 0.00012,
             speed: 12.,
+            up: Vec3::Y,
         }
     }
 }
@@ -84,10 +86,10 @@ fn initial_grab_cursor(mut primary_window: Query<&mut Window, With<PrimaryWindow
 }
 
 /// Spawns the `Camera3dBundle` to be controlled
-fn setup_player(mut commands: Commands) {
+fn setup_player(mut commands: Commands, settings: Res<MovementSettings>) {
     commands.spawn((
         Camera3dBundle {
-            transform: Transform::from_xyz(-2.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
+            transform: Transform::from_xyz(-2.0, 5.0, 5.0).looking_at(Vec3::ZERO, settings.up),
             ..Default::default()
         },
         FlyCam,
@@ -106,9 +108,8 @@ fn player_move(
     if let Ok(window) = primary_window.get_single() {
         for (_camera, mut transform) in query.iter_mut() {
             let mut velocity = Vec3::ZERO;
-            let local_z = transform.local_z();
-            let forward = -Vec3::new(local_z.x, 0., local_z.z);
-            let right = Vec3::new(local_z.z, 0., -local_z.x);
+            let forward = transform.forward();
+            let right = transform.right();
 
             for key in keys.get_pressed() {
                 match window.cursor.grab_mode {
@@ -124,9 +125,9 @@ fn player_move(
                         } else if key == key_bindings.move_right {
                             velocity += right;
                         } else if key == key_bindings.move_ascend {
-                            velocity += Vec3::Y;
+                            velocity += settings.up;
                         } else if key == key_bindings.move_descend {
-                            velocity -= Vec3::Y;
+                            velocity -= settings.up;
                         }
                     }
                 }
@@ -152,7 +153,8 @@ fn player_look(
     if let Ok(window) = primary_window.get_single() {
         for mut transform in query.iter_mut() {
             for ev in state.reader_motion.read(&motion) {
-                let (mut yaw, mut pitch, _) = transform.rotation.to_euler(EulerRot::YXZ);
+                let mut yaw = 0.0;
+                let mut pitch = 0.0;
                 match window.cursor.grab_mode {
                     CursorGrabMode::None => (),
                     _ => {
@@ -163,11 +165,21 @@ fn player_look(
                     }
                 }
 
-                pitch = pitch.clamp(-1.54, 1.54);
-
                 // Order is important to prevent unintended roll
-                transform.rotation =
-                    Quat::from_axis_angle(Vec3::Y, yaw) * Quat::from_axis_angle(Vec3::X, pitch);
+                transform.rotation = Quat::from_axis_angle(settings.up, yaw)
+                    * transform.rotation
+                    * Quat::from_axis_angle(Vec3::X, pitch);
+
+                let up = transform.up();
+                let right = transform.right();
+                let pitch = settings.up.cross(up).dot(right).atan2(settings.up.dot(up));
+                let restricted_pitch = pitch.clamp(-1.54, 1.54);
+                let diff = restricted_pitch - pitch;
+                transform.rotate_axis(right, diff);
+
+                // Eliminate accumulated roll and ensure we don't flip onto our heads.
+                let forward = transform.forward();
+                transform.look_to(forward, settings.up);
             }
         }
     } else {

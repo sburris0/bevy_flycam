@@ -1,7 +1,10 @@
 [package]
 name = "bevy_flycam"
-version = "0.14.1"
-authors = ["Spencer Burris <sburris@posteo.net>"]
+version = "0.15.0"
+authors = [
+    "Spencer Burris <sburris@posteo.net>",
+    "Bhavin Sojitra <https://github.com/c0d3-dump>",
+]
 edition = "2021"
 license = "ISC"
 description = "Basic first-person fly camera for the Bevy game engine"
@@ -13,14 +16,16 @@ categories = ["game-engines", "game-development"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-bevy = { version = "0.14", default-features = false, features = [
+bevy = { version = "0.15", default-features = false, features = [
     "bevy_asset",
     "bevy_core_pipeline",
     "bevy_render",
+    "bevy_winit",
+    "bevy_window",
 ] }
 
 [dev-dependencies]
-bevy = { version = "0.14", default-features = false, features = [
+bevy = { version = "0.15", default-features = false, features = [
     "bevy_asset",
     "bevy_core_pipeline",
     "bevy_pbr",

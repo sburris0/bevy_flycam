@@ -6,7 +6,6 @@ use bevy_flycam::prelude::*;
 
 fn main() {
     App::new()
-        .insert_resource(Msaa::Sample4)
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .insert_resource(MovementSettings {
@@ -30,23 +29,18 @@ fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     // plane
-    commands.spawn((PbrBundle {
-        mesh: meshes.add(Plane3d::new(Vec3::Y, Vec2::splat(2.5))),
-        material: materials.add(Color::srgb(0.3, 0.5, 0.3)),
-        ..Default::default()
-    },));
+    commands.spawn((
+        Mesh3d(meshes.add(Plane3d::new(Vec3::Y, Vec2::splat(2.5)))),
+        MeshMaterial3d(materials.add(Color::srgb(0.3, 0.5, 0.3))),
+    ));
 
     // cube
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
-        material: materials.add(Color::srgb(0.8, 0.7, 0.6)),
-        transform: Transform::from_xyz(0.0, 0.5, 0.0),
-        ..Default::default()
-    });
+    commands.spawn((
+        Mesh3d(meshes.add(Cuboid::new(1.0, 1.0, 1.0))),
+        MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
+        Transform::from_xyz(0.0, 0.5, 0.0),
+    ));
 
     // light
-    commands.spawn(PointLightBundle {
-        transform: Transform::from_xyz(4.0, 8.0, 4.0),
-        ..Default::default()
-    });
+    commands.spawn((PointLight::default(), Transform::from_xyz(4.0, 8.0, 4.0)));
 }

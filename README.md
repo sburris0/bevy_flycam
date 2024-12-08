@@ -8,20 +8,20 @@ A basic first-person fly camera for Bevy 0.14
 
 ## Controls
 
-* WASD to move horizontally
-* SPACE to ascend
-* LSHIFT to descend
-* ESC to grab/release cursor.
+- WASD to move horizontally
+- SPACE to ascend
+- LSHIFT to descend
+- ESC to grab/release cursor.
 
 ## Comparison
 
 There are a few notable differences from [bevy_fly_camera](https://github.com/mcpar-land/bevy_fly_camera)...
 
-* No linear interpolation
-* Cursor grabbing
-* Shorter code
-* Single-line setup
-* A tiny bit faster?
+- No linear interpolation
+- Cursor grabbing
+- Shorter code
+- Single-line setup
+- A tiny bit faster?
 
 ## Usage
 
@@ -29,7 +29,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.14"
+    bevy = "0.15"
     bevy_flycam = "*"
     ```
 
@@ -37,7 +37,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.14"
+    bevy = "0.15"
     bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
     ```
 
@@ -93,7 +93,7 @@ fn main() {
 
 ### Using your own camera
 
-You can also use `NoCameraPlayerPlugin` if you want to use your own camera.  Be sure to add the `FlyCam` component to your own camera or else this plugin won't know what to move.
+You can also use `NoCameraPlayerPlugin` if you want to use your own camera. Be sure to add the `FlyCam` component to your own camera or else this plugin won't know what to move.
 
 ```Rust
 #[bevy_main]
@@ -123,6 +123,7 @@ fn setup(mut commands: Commands) {
 bevy_flycam's crate version follows bevy's minor version as shown:
 | bevy     | bevy_flycam |
 | :--      | :--         |
+| `0.15.0` | `0.15.0`    |
 | `0.14.0` | `0.14.0`    |
 | `0.13.0` | `0.13.0`    |
 | `0.12.0` | `0.12.0`    |

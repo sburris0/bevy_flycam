@@ -7,12 +7,19 @@ use bevy_flycam::prelude::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(PlayerPlugin)
-        .insert_resource(MovementSettings {
-            sensitivity: 0.00015, // default: 0.00012
-            speed: 12.0,          // default: 12.0
+        .add_plugins(FlyCameraPlugin{
+            spawn_camera: true,
+            grab_cursor_on_startup: true,
         })
-        // Unreal movement layout
+        .insert_resource(MovementSettings {
+            move_speed: Vec3::splat(12.0),          // default: 12.0
+        })
+        .insert_resource(MouseSettings {
+            invert_horizontal: false,
+            invert_vertical: false,
+            mouse_sensitivity: 0.00012,
+            lock_cursor_to_middle: false,
+        })
         .insert_resource(KeyBindings {
             move_ascend: KeyCode::KeyE,
             move_descend: KeyCode::KeyQ,

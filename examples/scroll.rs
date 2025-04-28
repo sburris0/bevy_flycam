@@ -1,6 +1,5 @@
 use bevy::{input::mouse::MouseWheel, prelude::*};
 use bevy_flycam::prelude::*;
-
 // From bevy examples:
 // https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs
 
@@ -15,10 +14,16 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         //NoCameraPlayerPlugin as we provide the camera
-        .add_plugins(NoCameraPlayerPlugin)
+        .add_plugins(FlyCameraPlugin{
+            spawn_camera: false,
+            grab_cursor_on_startup: true,
+        })
         .insert_resource(MovementSettings {
             ..Default::default()
-        })
+        }).insert_resource(MouseSettings{
+        lock_cursor_to_middle: false,
+        ..Default::default()
+    })
         // Setting initial state
         .init_state::<ScrollType>()
         .add_systems(Startup, setup)
@@ -46,7 +51,7 @@ fn setup(
         Transform::from_xyz(0.0, 0.5, 0.0),
     ));
 
-    // light
+
     // light
     commands.spawn((PointLight::default(), Transform::from_xyz(4.0, 8.0, 4.0)));
 
@@ -87,8 +92,8 @@ fn scroll(
 ) {
     for event in mouse_wheel_events.read() {
         if *scroll_type.get() == ScrollType::MovementSpeed {
-            settings.speed = (settings.speed + event.y * 0.1).abs();
-            println!("Speed: {:?}", settings.speed);
+            settings.move_speed = (settings.move_speed + event.y * 0.1).abs();
+            println!("Speed: {:?}", settings.move_speed);
         } else {
             for (_camera, project) in query.iter_mut() {
                 if let Projection::Perspective(perspective) = project.into_inner() {

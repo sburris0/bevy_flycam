@@ -1,16 +1,23 @@
 use bevy::prelude::*;
 use bevy_flycam::prelude::*;
-
 //From bevy examples:
 //https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(PlayerPlugin)
+        .add_plugins(FlyCameraPlugin{
+            spawn_camera: true,
+            grab_cursor_on_startup: true,
+        })
         .insert_resource(MovementSettings {
-            sensitivity: 0.00015, // default: 0.00012
-            speed: 12.0,          // default: 12.0
+            move_speed: Vec3::splat(12.0),          // default: 12.0
+        })
+        .insert_resource(MouseSettings {
+            invert_horizontal: false,
+            invert_vertical: false,
+            mouse_sensitivity: 0.00012,
+            lock_cursor_to_middle: false,
         })
         .add_systems(Startup, setup)
         .run();
@@ -39,7 +46,7 @@ fn setup(
     commands.spawn((PointLight::default(), Transform::from_xyz(4.0, 8.0, 4.0)));
 
     info!("Move camera around by using WASD for lateral movement");
-    info!("Use Left Shift and Spacebar for vertical movement");
+    info!("Use Left Q and E for vertical movement");
     info!("Use the mouse to look around");
     info!("Press Esc to hide or show the mouse cursor");
 }

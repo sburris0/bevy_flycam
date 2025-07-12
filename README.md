@@ -100,7 +100,7 @@ You can also use `NoCameraPlayerPlugin` if you want to use your own camera. Be s
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugin(NoCameraPlayerPlugin)
+        .add_plugins(NoCameraPlayerPlugin)
         .add_systems(Startup, setup)
         .run();
 }

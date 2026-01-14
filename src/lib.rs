@@ -184,13 +184,8 @@ fn initial_grab_on_flycam_spawn(
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<MovementSettings>()
-            .init_resource::<KeyBindings>()
-            .add_systems(Startup, setup_player)
-            .add_systems(Startup, initial_grab_cursor)
-            .add_systems(Update, player_move)
-            .add_systems(Update, player_look)
-            .add_systems(Update, cursor_grab);
+        common_build(app);
+        app.add_systems(Startup, setup_player);
     }
 }
 
@@ -198,12 +193,17 @@ impl Plugin for PlayerPlugin {
 pub struct NoCameraPlayerPlugin;
 impl Plugin for NoCameraPlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<MovementSettings>()
-            .init_resource::<KeyBindings>()
-            .add_systems(Startup, initial_grab_cursor)
-            .add_systems(Startup, initial_grab_on_flycam_spawn)
-            .add_systems(Update, player_move)
-            .add_systems(Update, player_look)
-            .add_systems(Update, cursor_grab);
+        common_build(app);
     }
+}
+
+/// Common build steps for both PlayerPlugin and NoCameraPlayerPlugin
+fn common_build(app: &mut App) {
+    app.init_resource::<MovementSettings>()
+        .init_resource::<KeyBindings>()
+        .add_systems(Startup, initial_grab_cursor)
+        .add_systems(Startup, initial_grab_on_flycam_spawn)
+        .add_systems(Update, player_move)
+        .add_systems(Update, player_look)
+        .add_systems(Update, cursor_grab);
 }

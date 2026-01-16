@@ -29,7 +29,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.17"
+    bevy = "0.18"
     bevy_flycam = "*"
     ```
 
@@ -37,7 +37,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.17"
+    bevy = "0.18"
     bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
     ```
 

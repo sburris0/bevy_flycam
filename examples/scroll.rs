@@ -82,7 +82,7 @@ fn switch_scroll_type(
 fn scroll(
     mut settings: ResMut<MovementSettings>,
     scroll_type: Res<State<ScrollType>>,
-    mut mouse_wheel_events: EventReader<MouseWheel>,
+    mut mouse_wheel_events: MessageReader<MouseWheel>,
     mut query: Query<(&FlyCam, &mut Projection)>,
 ) {
     for event in mouse_wheel_events.read() {

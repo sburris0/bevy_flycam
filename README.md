@@ -123,6 +123,7 @@ fn setup(mut commands: Commands) {
 bevy_flycam's crate version follows bevy's minor version as shown:
 | bevy     | bevy_flycam |
 | :--      | :--         |
+| `0.18.0` | `0.18.0`    |
 | `0.17.2` | `0.17.2`    |
 | `0.16.1` | `0.16.1`    |
 | `0.15.0` | `0.15.0`    |

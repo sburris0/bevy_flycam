@@ -7,7 +7,7 @@ use bevy_flycam::prelude::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(PlayerPlugin)
+        .add_plugins(FlycamPlugin::default())
         .insert_resource(MovementSettings {
             sensitivity: 0.00015, // default: 0.00012
             speed: 12.0,          // default: 12.0

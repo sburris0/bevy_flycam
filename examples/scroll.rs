@@ -15,7 +15,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         //NoCameraPlayerPlugin as we provide the camera
-        .add_plugins(NoCameraPlayerPlugin)
+        .add_plugins(FlycamPlugin::default().with_spawn_camera(false))
         .insert_resource(MovementSettings {
             ..Default::default()
         })

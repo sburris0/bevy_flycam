@@ -181,28 +181,55 @@ fn initial_grab_on_flycam_spawn(
 }
 
 /// Contains everything needed to add first-person fly camera behavior to your game
-pub struct PlayerPlugin;
-impl Plugin for PlayerPlugin {
+pub struct FlycamPlugin {
+    initial_grab: bool,
+    spawn_camera: bool,
+}
+
+impl Plugin for FlycamPlugin {
     fn build(&self, app: &mut App) {
+        if self.initial_grab {
+            build_initial_grab(app);
+        }
         common_build(app);
-        app.add_systems(Startup, setup_player);
+        if self.spawn_camera {
+            app.add_systems(Startup, setup_player);
+        }
     }
 }
 
-/// Same as [`PlayerPlugin`] but does not spawn a camera
-pub struct NoCameraPlayerPlugin;
-impl Plugin for NoCameraPlayerPlugin {
-    fn build(&self, app: &mut App) {
-        common_build(app);
+impl Default for FlycamPlugin {
+    fn default() -> Self {
+        Self {
+            initial_grab: true,
+            spawn_camera: true,
+        }
     }
+}
+
+impl FlycamPlugin {
+    /// Configures whether the window will start with the cursor grabbed
+    pub fn with_initial_grab(mut self, initial_grab: bool) -> Self {
+        self.initial_grab = initial_grab;
+        self
+    }
+
+    /// Configures whether the plugin will spawn the player camera
+    pub fn with_spawn_camera(mut self, spawn_camera: bool) -> Self {
+        self.spawn_camera = spawn_camera;
+        self
+    }
+}
+
+fn build_initial_grab(app: &mut App) {
+    app.add_systems(Startup, initial_grab_cursor)
+        .add_systems(Startup, initial_grab_on_flycam_spawn);
 }
 
 /// Common build steps for both PlayerPlugin and NoCameraPlayerPlugin
 fn common_build(app: &mut App) {
     app.init_resource::<MovementSettings>()
         .init_resource::<KeyBindings>()
-        .add_systems(Startup, initial_grab_cursor)
-        .add_systems(Startup, initial_grab_on_flycam_spawn)
         .add_systems(Update, player_move)
         .add_systems(Update, player_look)
         .add_systems(Update, cursor_grab);

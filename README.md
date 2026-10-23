@@ -29,7 +29,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.18"
+    bevy = "0.20"
     bevy_flycam = "*"
     ```
 
@@ -37,7 +37,7 @@ There are a few notable differences from [bevy_fly_camera](https://github.com/mc
 
     ```toml
     [dependencies]
-    bevy = "0.18"
+    bevy = "0.20"
     bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
     ```
 
@@ -121,6 +121,7 @@ fn setup(mut commands: Commands) {
 bevy_flycam's crate version follows bevy's minor version as shown:
 | bevy     | bevy_flycam |
 | :--      | :--         |
+| `0.20.0` | `0.20.0`    |
 | `0.19.0` | `0.19.0`    |
 | `0.18.0` | `0.18.0`    |
 | `0.17.2` | `0.17.2`    |
